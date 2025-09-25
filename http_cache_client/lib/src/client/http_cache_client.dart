@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 import 'package:http_cache_client/src/extension/cache_response_extension.dart';
 import 'package:http_cache_client/src/extension/response_extension.dart';
 import 'package:http_cache_client/src/model/http_base_response.dart';

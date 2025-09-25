@@ -21,7 +21,7 @@ extension _CacheClientUtils on CacheClient {
     return request.options.keyBuilder(
       url: innerRequest.url,
       headers: innerRequest.headers,
-      data: innerRequest is Request ? innerRequest.body : null,
+      data: innerRequest is http.Request ? innerRequest.body : null,
     );
   }
 
@@ -87,19 +87,13 @@ extension _CacheClientUtils on CacheClient {
     http.Response response,
     HttpBaseRequest request,
   ) async {
-    final innerRequest = request.inner;
-
     final strategy = await CacheStrategyFactory(
       request: request,
       response: HttpBaseResponse(response),
       cacheOptions: request.options,
     ).compute(
       cacheResponseBuilder: () => response.toCacheResponse(
-        key: request.options.keyBuilder(
-          url: innerRequest.url,
-          headers: innerRequest.headers,
-          data: innerRequest is Request ? innerRequest.body : null,
-        ),
+        key: _getCacheKey(request),
         options: request.options,
         requestDate: request.requestDate,
       ),
