@@ -124,13 +124,7 @@ extension _DioCacheInterceptorUtils on DioCacheInterceptor {
     return options.keyBuilder(
       url: request.uri,
       headers: request.getFlattenHeaders(),
-      data: switch (request.data) {
-        String() => request.data,
-        List() => request.data.cast<int>(),
-        Map() => request.data.cast<String, String>(),
-        null => null,
-        _ => throw ArgumentError('Invalid request body type.'),
-      },
+      data: request.data,
     );
   }
 }
