@@ -21,7 +21,7 @@ extension _CacheClientUtils on CacheClient {
     return request.options.keyBuilder(
       url: innerRequest.url,
       headers: innerRequest.headers,
-      data: innerRequest is http.Request ? innerRequest.body : null,
+      body: innerRequest is http.Request ? innerRequest.body : null,
     );
   }
 

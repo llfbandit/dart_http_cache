@@ -124,7 +124,7 @@ extension _DioCacheInterceptorUtils on DioCacheInterceptor {
     return options.keyBuilder(
       url: request.uri,
       headers: request.getFlattenHeaders(),
-      data: request.data,
+      body: request.data,
     );
   }
 }

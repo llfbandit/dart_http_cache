@@ -9,7 +9,7 @@ import 'cache_priority.dart';
 typedef CacheKeyBuilder = String Function({
   required Uri url,
   Map<String, String>? headers,
-  Object? data,
+  Object? body,
 });
 
 /// Options to apply to handle request and cache behaviour.
@@ -74,7 +74,7 @@ class CacheOptions {
   static String defaultCacheKeyBuilder({
     required Uri url,
     Map<String, String>? headers,
-    Object? data,
+    Object? body,
   }) {
     return _uuid.v5(Namespace.url.value, url.toString());
   }
