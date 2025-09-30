@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:http_cache_core/http_cache_core.dart';
 // import 'package:objectbox/objectbox.dart';
 import 'package:http_cache_objectbox_store/objectbox.g.dart';
@@ -179,7 +181,7 @@ class CacheResponseBox {
   String key;
 
   @Property(type: PropertyType.byteVector)
-  List<int>? content;
+  Uint8List? content;
 
   @Property(type: PropertyType.date)
   DateTime? date;
@@ -190,7 +192,7 @@ class CacheResponseBox {
   DateTime? expires;
 
   @Property(type: PropertyType.byteVector)
-  List<int>? headers;
+  Uint8List? headers;
 
   String? lastModified;
 
@@ -244,13 +246,16 @@ class CacheResponseBox {
   }
 
   static CacheResponseBox fromObject(CacheResponse response) {
+    final content = response.content;
+    final headers = response.headers;
+
     final result = CacheResponseBox(
       key: response.key,
-      content: response.content,
+      content: content != null ? Uint8List.fromList(content) : null,
       date: response.date,
       eTag: response.eTag,
       expires: response.expires,
-      headers: response.headers,
+      headers: headers != null ? Uint8List.fromList(headers) : null,
       lastModified: response.lastModified,
       maxStale: response.maxStale,
       responseDate: response.responseDate,
