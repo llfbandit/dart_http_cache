@@ -16,9 +16,12 @@ extension _CacheClientUtils on CacheClient {
   }
 
   String _getCacheKey(HttpBaseRequest request) {
+    final innerRequest = request.inner;
+
     return request.options.keyBuilder(
-      url: request.inner.url,
-      headers: request.inner.headers,
+      url: innerRequest.url,
+      headers: innerRequest.headers,
+      body: innerRequest is http.Request ? innerRequest.body : null,
     );
   }
 
@@ -90,10 +93,7 @@ extension _CacheClientUtils on CacheClient {
       cacheOptions: request.options,
     ).compute(
       cacheResponseBuilder: () => response.toCacheResponse(
-        key: request.options.keyBuilder(
-          url: request.inner.url,
-          headers: request.inner.headers,
-        ),
+        key: _getCacheKey(request),
         options: request.options,
         requestDate: request.requestDate,
       ),
