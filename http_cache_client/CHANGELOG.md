@@ -1,3 +1,6 @@
+## 1.0.3
+- fix: Allow keyBuilder to depend on request body.
+
 ## 1.0.2
 - fix: BaseRequest now has `headers` getter instead of `headerValuesAsList`.
 - chore: Updated dependencies.

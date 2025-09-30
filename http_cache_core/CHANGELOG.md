@@ -1,3 +1,6 @@
+## 1.1.2
+- fix: Allow keyBuilder to depend on request body.
+
 ## 1.1.1
 - fix: Send only one condition on request cache validation.
 - fix: BaseRequest now has `headers` getter instead of `headerValuesAsList`.
