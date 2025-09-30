@@ -15,14 +15,10 @@ class MMKVFake implements MMKV {
   List<String> get allNonExpiredKeys => _data.keys.toList();
 
   @override
-  void checkContentChangedByOuterProcess() {
-    // TODO: implement checkContentChangedByOuterProcess
-  }
+  void checkContentChangedByOuterProcess() {}
 
   @override
-  void checkReSetCryptKey(String cryptKey) {
-    // TODO: implement checkReSetCryptKey
-  }
+  void checkReSetCryptKey(String cryptKey) {}
 
   @override
   void clearAll({bool keepSpace = false}) {
@@ -35,9 +31,7 @@ class MMKVFake implements MMKV {
   }
 
   @override
-  void close() {
-    // TODO: implement close
-  }
+  void close() {}
 
   @override
   bool containsKey(String key) {
@@ -166,17 +160,13 @@ class MMKVFake implements MMKV {
   }
 
   @override
-  void sync(bool sync) {
-    // TODO: implement sync
-  }
+  void sync(bool sync) {}
 
   @override
   int get totalSize => 0;
 
   @override
-  void trim() {
-    // TODO: implement trim
-  }
+  void trim() {}
 
   @override
   int valueSize(String key, bool actualSize) {
