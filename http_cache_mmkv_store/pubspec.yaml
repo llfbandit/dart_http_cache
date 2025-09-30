@@ -5,6 +5,7 @@ version: 1.0.1
 
 environment:
   sdk: ^3.0.0
+  flutter: ">=3.0.0"
 
 dependencies:
   http_cache_core: ^1.1.1
