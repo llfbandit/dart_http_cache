@@ -17,7 +17,7 @@ Future<void> addFooResponse(
 }) {
   final resp = CacheResponse(
     cacheControl: cacheControl ?? CacheControl(),
-    content: utf8.encode('foo'),
+    content: utf8.encode('fooéèàç'),
     date: DateTime.now(),
     eTag: 'an, etag',
     expires: expires,
@@ -79,7 +79,7 @@ Future<void> getItem(CacheStore store) async {
   expect(resp?.eTag, equals('an, etag'));
   expect(resp?.lastModified, lastModified);
   expect(resp?.maxStale, isNotNull);
-  expect(resp?.content, equals(utf8.encode('foo')));
+  expect(resp?.content, equals(utf8.encode('fooéèàç')));
   expect(resp?.headers, equals(headers));
   expect(resp?.priority, CachePriority.high);
   expect(resp?.cacheControl, equals(cacheControl));
