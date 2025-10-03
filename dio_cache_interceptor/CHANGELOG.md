@@ -1,3 +1,6 @@
+## 4.0.5
+- chore: Updated dependencies.
+
 ## 4.0.4
 - fix: Allow keyBuilder to depend on request body.
 

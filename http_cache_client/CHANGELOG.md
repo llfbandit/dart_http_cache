@@ -1,3 +1,6 @@
+## 1.0.4
+- chore: Updated dependencies.
+
 ## 1.0.3
 - fix: Allow keyBuilder to depend on request body.
 
