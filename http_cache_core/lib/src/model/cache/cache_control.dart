@@ -110,6 +110,7 @@ class CacheControl {
           other.add(attribute);
         }
       }
+      scanner.scan(whitespace);
     }
 
     headerValues ??= [];

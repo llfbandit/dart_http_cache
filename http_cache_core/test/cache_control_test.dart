@@ -40,6 +40,29 @@ void main() {
     expect(cacheControl1, equals(cacheControl3));
   });
 
+  test('headers with and without optional whitespace', () {
+    final cacheControl1 = CacheControl(
+      maxAge: 1,
+      noCache: true,
+      noStore: true,
+      other: ['unknown', 'unknown2=2'],
+      privacy: 'public',
+      maxStale: 2,
+      minFresh: 3,
+      mustRevalidate: true,
+    );
+
+    final cacheControl2 = CacheControl.fromHeader([
+      'max-age=1 , no-store,  no-cache, public,unknown , unknown2=2 , max-stale=2,min-fresh=3,must-revalidate',
+    ]);
+
+    expect(cacheControl1, equals(cacheControl2));
+
+    // Redo test with toHeader()
+    final cacheControl3 = CacheControl.fromHeader([cacheControl2.toHeader()]);
+    expect(cacheControl1, equals(cacheControl3));
+  });
+
   test('headers splitted', () {
     final cacheControl1 = CacheControl(
       maxAge: 1,
