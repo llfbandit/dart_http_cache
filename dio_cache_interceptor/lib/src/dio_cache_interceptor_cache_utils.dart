@@ -88,13 +88,16 @@ extension _DioCacheInterceptorUtils on DioCacheInterceptor {
 
     final cacheResp = strategy.cacheResponse;
     if (cacheResp != null) {
-      // Store response to cache store
-      await _getCacheStore(cacheOptions).set(cacheResp);
+      try {
+        // Store response to cache store
+        await _getCacheStore(cacheOptions).set(cacheResp);
 
-      // Update extra fields with cache info
-      response.extra[extraCacheKey] = cacheResp.key;
-      response.extra[extraFromNetworkKey] =
-          CacheStrategyFactory.allowedStatusCodes.contains(statusCode);
+        // Update extra fields with cache info
+        response.extra[extraCacheKey] = cacheResp.key;
+        response.extra[extraFromNetworkKey] = CacheStrategyFactory.allowedStatusCodes.contains(statusCode);
+      } catch (e) {
+        return;
+      }
     }
   }
 
@@ -110,11 +113,15 @@ extension _DioCacheInterceptorUtils on DioCacheInterceptor {
       cacheResponse = cacheResponse.copyWith(
         maxStale: DateTime.now().toUtc().add(maxStaleUpdate),
       );
-
-      // Store response to cache store
-      await _getCacheStore(cacheOptions).set(
-        await cacheResponse.writeContent(cacheOptions),
-      );
+      
+      try {
+        // Store response to cache store
+        await _getCacheStore(cacheOptions).set(
+          await cacheResponse.writeContent(cacheOptions),
+        );
+      } catch (e) {
+        return cacheResponse;
+      }
     }
 
     return cacheResponse;
