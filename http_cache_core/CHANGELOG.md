@@ -1,3 +1,6 @@
+## 1.1.3
+- fix: Allow optional whitespace in header values.
+
 ## 1.1.2
 - fix: Allow keyBuilder to depend on request body.
 
