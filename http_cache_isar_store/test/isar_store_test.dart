@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:http_cache_isar_store/http_cache_isar_store.dart';
 import 'package:http_cache_store_tester/common_store_testing.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:test/test.dart';
 
 void main() {
