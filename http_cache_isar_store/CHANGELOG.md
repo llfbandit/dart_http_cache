@@ -1,4 +1,4 @@
-## 3.0.0
+## 3.0.0-dev.1
 - feat: Update dependencies and migrate to isar_community.
 
 ## 2.0.1
