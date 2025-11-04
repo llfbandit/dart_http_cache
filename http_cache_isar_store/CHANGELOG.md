@@ -1,3 +1,6 @@
+## next
+- chore: Min SDK is now 3.6.0.
+
 ## 3.0.0-dev.1
 - feat: Update dependencies and migrate to isar_community.
 

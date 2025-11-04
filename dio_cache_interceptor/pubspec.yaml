@@ -5,13 +5,15 @@ issue_tracker: https://github.com/llfbandit/dart_http_cache/issues
 
 version: 4.0.5
 
+resolution: workspace
+
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.6.0
 
 dependencies:
   # https://pub.dev/packages/dio
   dio: ^5.2.0+1
-  http_cache_core: ^1.1.2
+  http_cache_core: ^1.1.3
 
 dev_dependencies:
   # https://pub.dev/packages/lints

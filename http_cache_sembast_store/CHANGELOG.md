@@ -1,3 +1,6 @@
+## next
+- chore: Min SDK is now 3.6.0.
+
 ## 1.0.0
 - feat: Saves response status code.
 - chore: Updated dependencies.

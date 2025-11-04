@@ -1,3 +1,6 @@
+## next
+- chore: Min SDK is now 3.6.0.
+
 ## 1.1.3
 - fix: Allow optional whitespace in header values.
 

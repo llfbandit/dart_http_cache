@@ -5,8 +5,10 @@ description: Demonstrates how to use dio cache interceptor lib.
 # pub.dev using `pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
+resolution: workspace
+
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.6.0
   flutter: ">=3.7.0"
 
 dependencies:
@@ -21,7 +23,7 @@ dependencies:
   sqlite3_flutter_libs: ^0.5.0
 
 dev_dependencies:
-  flutter_lints: ^3.0.1
+  flutter_lints: ^5.0.0
 
 # The following section is specific to Flutter.
 flutter:

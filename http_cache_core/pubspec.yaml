@@ -5,8 +5,10 @@ homepage: https://github.com/llfbandit/dart_http_cache/tree/master/http_cache_co
 repository: https://github.com/llfbandit/dart_http_cache/tree/master/http_cache_core
 issue_tracker: https://github.com/llfbandit/dart_http_cache/issues
 
+resolution: workspace
+
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.6.0
 
 dependencies:
   # https://pub.dev/packages/collection

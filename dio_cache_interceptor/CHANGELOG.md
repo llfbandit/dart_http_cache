@@ -1,3 +1,6 @@
+## next
+- chore: Min SDK is now 3.6.0.
+
 ## 4.0.5
 - chore: Updated dependencies.
 

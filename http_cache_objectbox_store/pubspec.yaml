@@ -3,11 +3,13 @@ description: A DB cache store agnostic HTTP client implementation with ObjectBox
 version: 2.0.1
 homepage: https://github.com/llfbandit/dart_http_cache/tree/master/http_cache_objectbox_store
 
+resolution: workspace
+
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.6.0
 
 dependencies:
-  http_cache_core: ^1.1.1
+  http_cache_core: ^1.1.3
 
   # https://pub.dev/packages/objectbox
   objectbox: ^4.0.3

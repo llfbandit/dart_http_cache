@@ -1,3 +1,6 @@
+## next
+- chore: Min SDK is now 3.6.0.
+
 ## 5.0.1
 - feat: Allow to provide a Hive implementation to be used.
 

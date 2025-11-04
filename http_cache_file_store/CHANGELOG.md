@@ -1,3 +1,6 @@
+## next
+- chore: Min SDK is now 3.6.0.
+
 ## 2.0.1
 - chore: Update `http_cache_core` to 1.1.0.
 

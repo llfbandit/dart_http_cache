@@ -3,11 +3,13 @@ description: A DB cache store agnostic HTTP client implementation with Sembast.
 version: 1.0.0
 homepage: https://github.com/llfbandit/dart_http_cache/tree/master/dart_http_cache_sembast_store
 
+resolution: workspace
+
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.6.0
 
 dependencies:
-  http_cache_core: ^1.1.1
+  http_cache_core: ^1.1.3
 
   # https://pub.dev/packages/sembast
   sembast: ^3.4.4
