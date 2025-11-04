@@ -25,5 +25,5 @@ dev_dependencies:
   # https://pub.dev/packages/test
   test: ^1.24.4
 
-  http_cache_store_tester: 
-    path: ../http_cache_store_tester
+  http_cache_store_tester: ^1.0.0
+
