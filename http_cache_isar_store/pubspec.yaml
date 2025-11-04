@@ -9,15 +9,15 @@ environment:
   flutter: ">=3.0.0"
 
 dependencies:
-  http_cache_core: ^1.1.1
+  http_cache_core: ^1.1.3
 
   # https://pub.dev/packages/isar
-  isar: ^3.1.0+1
+  isar_community: ^3.3.0-dev.3
   # https://pub.dev/packages/isar_flutter_libs
-  isar_flutter_libs: ^3.1.0+1
+  isar_community_flutter_libs: ^3.3.0-dev.3
 
 dev_dependencies:
-  isar_generator: ^3.1.0+1
+  isar_community_generator: ^3.3.0-dev.3
   build_runner: any
 
   # https://pub.dev/packages/lints
@@ -26,3 +26,4 @@ dev_dependencies:
   test: ^1.24.4
 
   http_cache_store_tester: ^1.0.0
+

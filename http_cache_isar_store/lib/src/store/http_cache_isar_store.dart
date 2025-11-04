@@ -1,6 +1,6 @@
 import 'package:http_cache_core/http_cache_core.dart';
 import 'package:http_cache_isar_store/src/store/cache_collection.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 /// A store saving responses using hive.
 ///
