@@ -53,7 +53,7 @@ class HiveCacheStore extends CacheStore {
     final keys = <String>[];
 
     for (var i = 0; i < box.keys.length; i++) {
-      final resp = await box.getAt(i);
+      final resp = await _getFromBox(box, index: i);
 
       if (resp != null) {
         var shouldRemove = resp.priority.index <= priorityOrBelow.index;
@@ -80,7 +80,7 @@ class HiveCacheStore extends CacheStore {
   @override
   Future<void> delete(String key, {bool staleOnly = false}) async {
     final box = await _openBox();
-    final resp = await box.get(key);
+    final resp = await _getFromBox(box, key: key);
     if (resp == null) return Future.value();
 
     if (staleOnly && !resp.isStaled()) {
@@ -113,7 +113,7 @@ class HiveCacheStore extends CacheStore {
   @override
   Future<CacheResponse?> get(String key) async {
     final box = await _openBox();
-    return box.get(key);
+    return _getFromBox(box, key: key);
   }
 
   @override
@@ -126,7 +126,7 @@ class HiveCacheStore extends CacheStore {
     final box = await _openBox();
 
     for (var i = 0; i < box.keys.length; i++) {
-      final resp = await box.getAt(i);
+      final resp = await _getFromBox(box, index: i);
 
       if (resp != null) {
         if (pathExists(resp.url, pathPattern, queryParams: queryParams)) {
@@ -151,6 +151,24 @@ class HiveCacheStore extends CacheStore {
     );
 
     return Future.value(_box);
+  }
+
+  Future<CacheResponse?> _getFromBox(
+    LazyBox<CacheResponse> box, {
+    String? key,
+    int? index,
+  }) async {
+    if (key == null && index == null) return null;
+    try {
+      return await (key != null ? box.get(key) : box.getAt(index!));
+    } catch (e) {
+      if (e is HiveError &&
+          e.message ==
+              'Could not read value from box. Maybe your box is corrupted.') {
+        return null;
+      }
+      rethrow;
+    }
   }
 }
 
