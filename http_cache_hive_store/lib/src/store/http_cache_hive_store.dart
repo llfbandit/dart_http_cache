@@ -6,13 +6,14 @@ import 'package:http_cache_core/http_cache_core.dart';
 class HiveCacheStore extends CacheStore {
   // Cache box name
   final String hiveBoxName;
+  // Optional home directory for cache box
+  final String? directory;
   // Optional cipher to use directly with Hive
   final HiveCipher? encryptionCipher;
 
   /// The Hive instance to use.
   final HiveInterface hive;
 
-  String? _directory;
   LazyBox<CacheResponse>? _box;
 
   /// Initialize cache store by giving Hive a home directory.
@@ -22,15 +23,11 @@ class HiveCacheStore extends CacheStore {
   /// [hiveInterface] is the Hive instance to use. Mostly used for testing.
   /// If not provided, the default [Hive] instance will be used.
   HiveCacheStore(
-    String? directory, {
+    this.directory, {
     this.hiveBoxName = 'dio_cache',
     this.encryptionCipher,
     HiveInterface? hiveInterface,
   }) : hive = hiveInterface ?? Hive {
-    if (directory != null) {
-      _directory = directory;
-    }
-
     if (!hive.isAdapterRegistered(_CacheResponseAdapter._typeId)) {
       hive.registerAdapter(_CacheResponseAdapter());
     }
@@ -149,7 +146,7 @@ class HiveCacheStore extends CacheStore {
     _box ??= await hive.openLazyBox<CacheResponse>(
       hiveBoxName,
       encryptionCipher: encryptionCipher,
-      path: _directory,
+      path: directory,
     );
 
     return Future.value(_box);
