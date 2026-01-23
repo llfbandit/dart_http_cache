@@ -12,6 +12,7 @@ class HiveCacheStore extends CacheStore {
   /// The Hive instance to use.
   final HiveInterface hive;
 
+  String? _directory;
   LazyBox<CacheResponse>? _box;
 
   /// Initialize cache store by giving Hive a home directory.
@@ -27,7 +28,7 @@ class HiveCacheStore extends CacheStore {
     HiveInterface? hiveInterface,
   }) : hive = hiveInterface ?? Hive {
     if (directory != null) {
-      hive.init(directory);
+      _directory = directory;
     }
 
     if (!hive.isAdapterRegistered(_CacheResponseAdapter._typeId)) {
@@ -148,6 +149,7 @@ class HiveCacheStore extends CacheStore {
     _box ??= await hive.openLazyBox<CacheResponse>(
       hiveBoxName,
       encryptionCipher: encryptionCipher,
+      path: _directory,
     );
 
     return Future.value(_box);
