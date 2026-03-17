@@ -49,6 +49,7 @@ extension ResponseExtension on Response {
     }
 
     updateNonNullHeader(cacheControlHeader);
+    updateNonNullHeader(ageHeader);
     updateNonNullHeader(dateHeader);
     updateNonNullHeader(etagHeader);
     updateNonNullHeader(lastModifiedHeader);
