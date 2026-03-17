@@ -113,7 +113,7 @@ const CacheSchema = CollectionSchema(
   getId: _cacheGetId,
   getLinks: _cacheGetLinks,
   attach: _cacheAttach,
-  version: '3.3.0-dev.3',
+  version: '3.3.0',
 );
 
 int _cacheEstimateSize(
