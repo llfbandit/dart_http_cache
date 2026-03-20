@@ -50,16 +50,16 @@ void main() {
     final key = options.keyBuilder(url: resp.request!.url);
     expect(await store.exists(key), isTrue);
     final cacheResp1 = await store.get(key);
+    expect(resp.headers[ageHeader], equals('1'));
 
     final resp304 = await getOk(options);
     expect(resp304.statusCode, equals(200));
     final cacheResp2 = await store.get(key);
-
-    expect(
-        cacheResp1!.copyWith(
-            requestDate: cacheResp2!.requestDate,
-            responseDate: cacheResp2.responseDate),
-        equals(cacheResp2));
+    expect(resp304.headers[ageHeader], equals('10'));
+    expect(cacheResp1, isNotNull);
+    expect(cacheResp2, isNotNull);
+    expect(cacheResp2!.eTag, equals('5678'));
+    expect(cacheResp2.getHeaders()[ageHeader], equals('10'));
   });
 
   test('Fetch noCache policy', () async {

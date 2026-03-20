@@ -26,6 +26,7 @@ class MockHttpClientAdapter implements HttpClientAdapter {
             304,
             headers: {
               Headers.contentTypeHeader: [Headers.jsonContentType],
+              ageHeader: ['10'],
               'etag': ['5678'],
             },
           );
@@ -44,11 +45,12 @@ class MockHttpClientAdapter implements HttpClientAdapter {
         return ResponseBody.fromString(
           jsonEncode({'path': uri.path}),
           200,
-          headers: {
-            Headers.contentTypeHeader: [Headers.jsonContentType],
-            'etag': ['1234'],
-          },
-        );
+        headers: {
+          Headers.contentTypeHeader: [Headers.jsonContentType],
+          ageHeader: ['1'],
+          'etag': ['1234'],
+        },
+      );
       case '/ok-nodirective':
         return ResponseBody.fromString(
           jsonEncode({'path': uri.path}),

@@ -96,12 +96,14 @@ void main() {
     final resp = await dio.get('${MockHttpClientAdapter.mockBase}/ok');
     final key = resp.extra[extraCacheKey];
     expect(await store.exists(key), isTrue);
+    expect(resp.headers[ageHeader], equals(['1']));
 
     var resp304 = await dio.get('${MockHttpClientAdapter.mockBase}/ok');
     expect(resp304.statusCode, equals(200));
     expect(resp.data['path'], equals('/ok'));
     expect(resp304.extra[extraCacheKey], equals(key));
     expect(resp304.extra[extraFromNetworkKey], isTrue);
+    expect(resp304.headers[ageHeader], equals(['10']));
     expect(resp304.headers['etag'], equals(['5678']));
   });
 

@@ -46,6 +46,7 @@ extension ResponseExtension on http.Response {
     }
 
     updateNonNullHeader(cacheControlHeader);
+    updateNonNullHeader(ageHeader);
     updateNonNullHeader(dateHeader);
     updateNonNullHeader(etagHeader);
     updateNonNullHeader(lastModifiedHeader);

@@ -15,10 +15,15 @@ Future<http.Response> getOk(
     MockClient(
       (request) async => http.Response(
         jsonEncode({'path': request.url.path}),
-        request.headers.containsKey('x-err') ? 500 : 200,
+        request.headers.containsKey('x-err')
+            ? 500
+            : request.headers.containsKey(ifNoneMatchHeader)
+                ? 304
+                : 200,
         headers: {
           contentTypeHeader: jsonContentType,
-          etagHeader: '1234',
+          etagHeader: request.headers.containsKey(ifNoneMatchHeader) ? '5678' : '1234',
+          ageHeader: request.headers.containsKey(ifNoneMatchHeader) ? '10' : '1',
           dateHeader: HttpDate.format(DateTime.now()),
         },
         request: request,
