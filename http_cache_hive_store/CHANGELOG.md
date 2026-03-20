@@ -1,3 +1,6 @@
+## 5.1.0
+- feat: Add Isolated Hive cache store.
+
 ## 5.0.2
 - chore: Min SDK is now 3.6.0.
 - fix: Initialize home directory for box instead of Hive.

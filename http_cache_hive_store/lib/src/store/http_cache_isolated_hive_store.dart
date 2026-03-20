@@ -4,26 +4,26 @@ import 'package:http_cache_core/http_cache_core.dart';
 import 'http_cache_hive_adapters.dart';
 import 'http_cache_hive_base_store.dart';
 
-/// A store saving responses using hive.
+/// A store saving responses using isolated hive.
 ///
-class HiveCacheStore extends BaseHiveCacheStore {
-  /// The Hive instance to use.
-  final HiveInterface hive;
+class IsolatedHiveCacheStore extends BaseHiveCacheStore {
+  /// The Isolated Hive instance to use.
+  final IsolatedHiveInterface hive;
 
-  LazyBox<CacheResponse>? _box;
+  IsolatedLazyBox<CacheResponse>? _box;
 
   /// Initialize cache store by giving Hive a home directory.
   /// [directory] can be null only on web platform or if you already use Hive
   /// in your app.
   ///
-  /// [hiveInterface] is the Hive instance to use.
-  /// If not provided, the default [Hive] implementation will be used.
-  HiveCacheStore(
+  /// [hiveInterface] is the Isolated Hive instance to use.
+  /// If not provided, the default [IsolatedHive] implementation will be used.
+  IsolatedHiveCacheStore(
     String? directory, {
     super.hiveBoxName,
     super.encryptionCipher,
-    HiveInterface? hiveInterface,
-  })  : hive = hiveInterface ?? Hive,
+    IsolatedHiveInterface? hiveInterface,
+  })  : hive = hiveInterface ?? IsolatedHive,
         super(directory: directory);
 
   @override
@@ -55,6 +55,6 @@ class HiveCacheStore extends BaseHiveCacheStore {
       path: directory,
     );
 
-    return LazyBoxAdapter(_box!);
+    return IsolatedLazyBoxAdapter(_box!);
   }
 }
