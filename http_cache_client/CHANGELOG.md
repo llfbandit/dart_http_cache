@@ -1,4 +1,5 @@
-## next
+## 1.0.5
+- fix: Age header refresh on 304 revalidation
 - chore: Min SDK is now 3.6.0.
 
 ## 1.0.4
