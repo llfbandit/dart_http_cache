@@ -13,6 +13,7 @@ dependencies:
 
   # https://pub.dev/packages/objectbox
   objectbox: ^5.3.2
+  flat_buffers: ^25.9.23
 
 dev_dependencies:
   # https://pub.dev/packages/build_runner
