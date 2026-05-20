@@ -1,3 +1,7 @@
+## 3.1.0
+- feat: Update isar_community to 3.3.2.
+- fix: pin isar_community package versions to avoid errors with generated code.
+
 ## 3.0.0
 - chore: Min SDK is now 3.6.0.
 - feat: Update dependencies and migrate to isar_community.
@@ -16,5 +20,4 @@
 - Fix pubspec.yaml
 
 ## 1.0.0
-
 - Initial version.
