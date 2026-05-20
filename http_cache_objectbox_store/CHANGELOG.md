@@ -1,5 +1,7 @@
-## next
-- chore: Min SDK is now 3.6.0.
+## 2.1.0
+- chore: Min SDK is now 3.8.0.
+- feat: Update objectbox to ^5.0.0.
+- fix: Generate objectbox-model.json and objectbox.g.dart to src directory.
 
 ## 2.0.1
 - fix: save bytes array as unsigned bytes

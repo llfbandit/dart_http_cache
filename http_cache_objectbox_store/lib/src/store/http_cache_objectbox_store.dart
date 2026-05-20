@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:http_cache_core/http_cache_core.dart';
 // import 'package:objectbox/objectbox.dart';
-import 'package:http_cache_objectbox_store/objectbox.g.dart';
+import 'package:http_cache_objectbox_store/src/store/objectbox.g.dart';
 
 /// A store saving responses using ObjectBox.
 ///
