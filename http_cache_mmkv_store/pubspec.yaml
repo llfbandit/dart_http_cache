@@ -6,7 +6,7 @@ version: 1.0.1
 resolution: workspace
 
 environment:
-  sdk: ^3.6.0
+  sdk: ^3.8.0
   flutter: ">=3.0.0"
 
 dependencies:
@@ -16,7 +16,7 @@ dependencies:
 
 dev_dependencies:
   # https://pub.dev/packages/lints
-  lints: ^5.0.0
+  lints: ^6.1.0
   # https://pub.dev/packages/test
   test: ^1.24.4
   http_cache_store_tester: ^1.0.0

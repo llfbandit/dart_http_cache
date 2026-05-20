@@ -18,7 +18,7 @@ class MMKVFake implements MMKV {
   void checkContentChangedByOuterProcess() {}
 
   @override
-  void checkReSetCryptKey(String cryptKey) {}
+  void checkReSetCryptKey(String cryptKey, {bool aes256 = false}) {}
 
   @override
   void clearAll({bool keepSpace = false}) {
@@ -145,7 +145,7 @@ class MMKVFake implements MMKV {
   String get mmapID => '';
 
   @override
-  bool reKey(String? cryptKey) {
+  bool reKey(String? cryptKey, {bool aes256 = false}) {
     return true;
   }
 

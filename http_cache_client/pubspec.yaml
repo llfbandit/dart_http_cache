@@ -7,7 +7,7 @@ issue_tracker: https://github.com/llfbandit/dart_http_cache/issues
 resolution: workspace
 
 environment:
-  sdk: ^3.6.0
+  sdk: ^3.8.0
 
 dependencies:
   # https://pub.dev/packages/http
@@ -16,6 +16,6 @@ dependencies:
 
 dev_dependencies:
   # https://pub.dev/packages/lints
-  lints: ^5.0.0
+  lints: ^6.1.0
   # https://pub.dev/packages/test
   test: ^1.24.4
