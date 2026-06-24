@@ -7,16 +7,16 @@ class DioBaseRequest extends BaseRequest {
   final RequestOptions request;
   final Map<String, String> _headers;
 
-  DioBaseRequest(this.request) : _headers = request.getFlattenHeaders() {
-    request.headers = _headers;
-  }
+  DioBaseRequest(this.request) : _headers = request.getFlattenHeaders();
 
   @override
   void setHeader(String header, String? value) {
     if (value == null) {
       request.headers.remove(header);
+      _headers.remove(header);
     } else {
       request.headers[header] = value;
+      _headers[header] = value;
     }
   }
 
