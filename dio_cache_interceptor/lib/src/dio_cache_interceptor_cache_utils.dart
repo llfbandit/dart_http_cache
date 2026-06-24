@@ -75,16 +75,17 @@ extension _DioCacheInterceptorUtils on DioCacheInterceptor {
     CacheOptions cacheOptions, {
     int? statusCode,
   }) async {
-    final strategy = await CacheStrategyFactory(
-      request: DioBaseRequest(response.requestOptions),
-      response: DioBaseResponse(response),
-      cacheOptions: cacheOptions,
-    ).compute(
-      cacheResponseBuilder: () => response.toCacheResponse(
-        key: _getCacheKey(cacheOptions, response.requestOptions),
-        options: cacheOptions,
-      ),
-    );
+    final strategy =
+        await CacheStrategyFactory(
+          request: DioBaseRequest(response.requestOptions),
+          response: DioBaseResponse(response),
+          cacheOptions: cacheOptions,
+        ).compute(
+          cacheResponseBuilder: () => response.toCacheResponse(
+            key: _getCacheKey(cacheOptions, response.requestOptions),
+            options: cacheOptions,
+          ),
+        );
 
     final cacheResp = strategy.cacheResponse;
     if (cacheResp != null) {
@@ -93,8 +94,9 @@ extension _DioCacheInterceptorUtils on DioCacheInterceptor {
 
       // Update extra fields with cache info
       response.extra[extraCacheKey] = cacheResp.key;
-      response.extra[extraFromNetworkKey] =
-          CacheStrategyFactory.allowedStatusCodes.contains(statusCode);
+      response.extra[extraFromNetworkKey] = CacheStrategyFactory
+          .allowedStatusCodes
+          .contains(statusCode);
     }
   }
 
@@ -104,17 +106,27 @@ extension _DioCacheInterceptorUtils on DioCacheInterceptor {
     CacheResponse cacheResponse,
     CacheOptions cacheOptions,
   ) async {
-    // Add or update maxStale
     final maxStaleUpdate = cacheOptions.maxStale;
     if (maxStaleUpdate != null) {
-      cacheResponse = cacheResponse.copyWith(
-        maxStale: DateTime.now().toUtc().add(maxStaleUpdate),
-      );
+      final newMaxStale = DateTime.now().toUtc().add(maxStaleUpdate);
 
-      // Store response to cache store
-      await _getCacheStore(cacheOptions).set(
-        await cacheResponse.writeContent(cacheOptions),
+      // Only persist if the remaining lifetime is less than half the window.
+      // This avoids a full encrypt + store write on every single cache hit.
+      final halfWindow = Duration(
+        microseconds: maxStaleUpdate.inMicroseconds ~/ 2,
       );
+      final existingMaxStale = cacheResponse.maxStale;
+      final needsWrite =
+          existingMaxStale == null ||
+          existingMaxStale.isBefore(DateTime.now().toUtc().add(halfWindow));
+
+      cacheResponse = cacheResponse.copyWith(maxStale: newMaxStale);
+
+      if (needsWrite) {
+        await _getCacheStore(
+          cacheOptions,
+        ).set(await cacheResponse.writeContent(cacheOptions));
+      }
     }
 
     return cacheResponse;

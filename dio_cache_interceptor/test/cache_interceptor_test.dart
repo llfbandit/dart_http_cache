@@ -405,6 +405,39 @@ void main() {
     },
   );
 
+  test(
+    'repeated cache hits with maxStale do not write to the store on every hit',
+    () async {
+      final countingStore = _CountingStore(MemCacheStore());
+
+      dio.interceptors.clear();
+      dio.interceptors.add(
+        DioCacheInterceptor(
+          options: CacheOptions(
+            store: countingStore,
+            policy: CachePolicy.forceCache,
+            maxStale: const Duration(minutes: 10),
+          ),
+        ),
+      );
+
+      // First request: cache miss — network fetch + _saveResponse stores entry.
+      await dio.get('${MockHttpClientAdapter.mockBase}/ok');
+      final writesAfterPrime = countingStore.setCount;
+
+      // Subsequent cache hits within the half-window (5 min) must not write.
+      await dio.get('${MockHttpClientAdapter.mockBase}/ok');
+      await dio.get('${MockHttpClientAdapter.mockBase}/ok');
+
+      expect(
+        countingStore.setCount,
+        equals(writesAfterPrime),
+        reason:
+            'no store write expected while maxStale is still >half-window away',
+      );
+    },
+  );
+
   group('store exception handling', () {
     test(
       'store.get() throwing in onRequest rejects with DioException',
@@ -464,6 +497,58 @@ void main() {
       },
     );
   });
+}
+
+/// Store that delegates to [_inner] and counts [set] calls.
+class _CountingStore implements CacheStore {
+  _CountingStore(this._inner);
+
+  final CacheStore _inner;
+  int setCount = 0;
+
+  @override
+  Future<void> clean({
+    CachePriority priorityOrBelow = CachePriority.high,
+    bool staleOnly = false,
+  }) => _inner.clean(priorityOrBelow: priorityOrBelow, staleOnly: staleOnly);
+
+  @override
+  Future<void> close() => _inner.close();
+
+  @override
+  Future<void> delete(String key, {bool staleOnly = false}) =>
+      _inner.delete(key, staleOnly: staleOnly);
+
+  @override
+  Future<bool> exists(String key) => _inner.exists(key);
+
+  @override
+  Future<CacheResponse?> get(String key) => _inner.get(key);
+
+  @override
+  Future<void> set(CacheResponse response) {
+    setCount++;
+    return _inner.set(response);
+  }
+
+  @override
+  Future<List<CacheResponse>> getFromPath(
+    RegExp pathPattern, {
+    Map<String, String?>? queryParams,
+  }) => _inner.getFromPath(pathPattern, queryParams: queryParams);
+
+  @override
+  Future<void> deleteFromPath(
+    RegExp pathPattern, {
+    Map<String, String?>? queryParams,
+  }) => _inner.deleteFromPath(pathPattern, queryParams: queryParams);
+
+  @override
+  bool pathExists(
+    String url,
+    RegExp pathPattern, {
+    Map<String, String?>? queryParams,
+  }) => _inner.pathExists(url, pathPattern, queryParams: queryParams);
 }
 
 /// Store that throws on [get] to simulate read failures.
