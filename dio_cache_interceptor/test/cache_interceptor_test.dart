@@ -12,12 +12,13 @@ void main() {
   late CacheOptions options;
 
   setUp(() async {
-    dio = Dio(BaseOptions(
-      sendTimeout: Duration(seconds: 2),
-      connectTimeout: Duration(seconds: 2),
-      receiveTimeout: Duration(seconds: 2),
-    ))
-      ..httpClientAdapter = MockHttpClientAdapter();
+    dio = Dio(
+      BaseOptions(
+        sendTimeout: Duration(seconds: 2),
+        connectTimeout: Duration(seconds: 2),
+        receiveTimeout: Duration(seconds: 2),
+      ),
+    )..httpClientAdapter = MockHttpClientAdapter();
 
     store = MemCacheStore();
     await store.clean();
@@ -35,10 +36,7 @@ void main() {
       '${MockHttpClientAdapter.mockBase}/ok-stream',
       options: Options(responseType: ResponseType.stream),
     );
-    expect(
-      await store.exists(resp.extra[extraCacheKey] ?? ''),
-      isFalse,
-    );
+    expect(await store.exists(resp.extra[extraCacheKey] ?? ''), isFalse);
   });
 
   test('Fetch canceled', () async {
@@ -134,8 +132,9 @@ void main() {
     // 3rd time fetch
     resp = await dio.get(
       '${MockHttpClientAdapter.mockBase}/ok-nodirective',
-      options:
-          options.copyWith(policy: CachePolicy.refreshForceCache).toOptions(),
+      options: options
+          .copyWith(policy: CachePolicy.refreshForceCache)
+          .toOptions(),
     );
     expect(resp.statusCode, equals(200));
     expect(resp.extra[extraFromNetworkKey], isTrue);
@@ -189,9 +188,14 @@ void main() {
       resp = await dio.get(
         '${MockHttpClientAdapter.mockBase}/ok',
         options: Options(
-          extra: options.copyWith(
-              hitCacheOnErrorCodes: [], policy: CachePolicy.refresh).toExtra()
-            ..addAll({'x-err': '500'}),
+          extra:
+              options
+                  .copyWith(
+                    hitCacheOnErrorCodes: [],
+                    policy: CachePolicy.refresh,
+                  )
+                  .toExtra()
+                ..addAll({'x-err': '500'}),
         ),
       );
     } catch (err) {
@@ -202,9 +206,14 @@ void main() {
       resp = await dio.get(
         '${MockHttpClientAdapter.mockBase}/ok',
         options: Options(
-          extra: options.copyWith(
-              hitCacheOnErrorCodes: [], policy: CachePolicy.refresh).toExtra()
-            ..addAll({'x-err': '500'}),
+          extra:
+              options
+                  .copyWith(
+                    hitCacheOnErrorCodes: [],
+                    policy: CachePolicy.refresh,
+                  )
+                  .toExtra()
+                ..addAll({'x-err': '500'}),
         ),
       );
     } catch (err) {
@@ -224,9 +233,14 @@ void main() {
     final resp2 = await dio.get(
       '${MockHttpClientAdapter.mockBase}/ok',
       options: Options(
-        extra: options.copyWith(
-            hitCacheOnErrorCodes: [500], policy: CachePolicy.refresh).toExtra()
-          ..addAll({'x-err': '500'}),
+        extra:
+            options
+                .copyWith(
+                  hitCacheOnErrorCodes: [500],
+                  policy: CachePolicy.refresh,
+                )
+                .toExtra()
+              ..addAll({'x-err': '500'}),
       ),
     );
 
@@ -304,12 +318,39 @@ void main() {
   });
 
   test('Skip downloads', () async {
-    final resp = await dio.get(
-      '${MockHttpClientAdapter.mockBase}/download',
-    );
+    final resp = await dio.get('${MockHttpClientAdapter.mockBase}/download');
     final key = resp.extra[extraCacheKey];
     expect(key, isNull);
   });
+
+  test(
+    'Fetch 304 with evicted cache entry is passed through without storing',
+    () async {
+      // Prime the cache so we know the etag.
+      final resp200 = await dio.get('${MockHttpClientAdapter.mockBase}/ok');
+      final key = resp200.extra[extraCacheKey] as String;
+      expect(await store.exists(key), isTrue);
+
+      // Simulate eviction of the entry after onRequest but before onResponse.
+      await store.delete(key);
+      expect(await store.exists(key), isFalse);
+
+      // Re-request with the known etag; the mock returns 304.
+      // validateStatus routes the 304 through onResponse rather than onError.
+      final resp304 = await dio.get(
+        '${MockHttpClientAdapter.mockBase}/ok',
+        options: Options(
+          validateStatus: (s) => s == 304,
+          headers: {'if-none-match': resp200.headers['etag']!.first},
+        ),
+      );
+
+      // 304 is passed through as-is — no broken entry stored.
+      expect(resp304.statusCode, equals(304));
+      expect(resp304.extra[extraCacheKey], isNull);
+      expect(await store.exists(key), isFalse);
+    },
+  );
 
   test('Fetch 304 handle in response flow', () async {
     final resp = await dio.get('${MockHttpClientAdapter.mockBase}/ok');
@@ -336,50 +377,63 @@ void main() {
   });
 
   group('store exception handling', () {
-    test('store.get() throwing in onRequest rejects with DioException', () async {
-      dio.interceptors.clear();
-      dio.interceptors.add(
-        DioCacheInterceptor(options: CacheOptions(store: _ThrowingOnGetStore())),
-      );
-
-      expect(
-        () => dio.get('${MockHttpClientAdapter.mockBase}/ok'),
-        throwsA(isA<DioException>()),
-      );
-    });
-
-    test('store.set() throwing in onResponse rejects with DioException', () async {
-      dio.interceptors.clear();
-      dio.interceptors.add(
-        DioCacheInterceptor(options: CacheOptions(store: _ThrowingOnSetStore())),
-      );
-
-      expect(
-        () => dio.get('${MockHttpClientAdapter.mockBase}/ok'),
-        throwsA(isA<DioException>()),
-      );
-    });
-
-    test('store.get() throwing in onError does not hang — completes with DioException', () async {
-      dio.interceptors.clear();
-      dio.interceptors.add(
-        DioCacheInterceptor(
-          options: CacheOptions(
-            store: _ThrowingOnGetStore(),
-            hitCacheOnNetworkFailure: true,
+    test(
+      'store.get() throwing in onRequest rejects with DioException',
+      () async {
+        dio.interceptors.clear();
+        dio.interceptors.add(
+          DioCacheInterceptor(
+            options: CacheOptions(store: _ThrowingOnGetStore()),
           ),
-        ),
-      );
+        );
 
-      // Must complete (not hang) and produce a DioException.
-      expect(
-        () => dio.get(
-          '${MockHttpClientAdapter.mockBase}/exception',
-          options: Options(extra: {'x-err': '500'}),
-        ),
-        throwsA(isA<DioException>()),
-      );
-    });
+        expect(
+          () => dio.get('${MockHttpClientAdapter.mockBase}/ok'),
+          throwsA(isA<DioException>()),
+        );
+      },
+    );
+
+    test(
+      'store.set() throwing in onResponse rejects with DioException',
+      () async {
+        dio.interceptors.clear();
+        dio.interceptors.add(
+          DioCacheInterceptor(
+            options: CacheOptions(store: _ThrowingOnSetStore()),
+          ),
+        );
+
+        expect(
+          () => dio.get('${MockHttpClientAdapter.mockBase}/ok'),
+          throwsA(isA<DioException>()),
+        );
+      },
+    );
+
+    test(
+      'store.get() throwing in onError does not hang — completes with DioException',
+      () async {
+        dio.interceptors.clear();
+        dio.interceptors.add(
+          DioCacheInterceptor(
+            options: CacheOptions(
+              store: _ThrowingOnGetStore(),
+              hitCacheOnNetworkFailure: true,
+            ),
+          ),
+        );
+
+        // Must complete (not hang) and produce a DioException.
+        expect(
+          () => dio.get(
+            '${MockHttpClientAdapter.mockBase}/exception',
+            options: Options(extra: {'x-err': '500'}),
+          ),
+          throwsA(isA<DioException>()),
+        );
+      },
+    );
   });
 }
 

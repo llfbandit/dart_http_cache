@@ -15,9 +15,9 @@ class DioCacheInterceptor extends Interceptor {
   final CacheStore _store;
 
   DioCacheInterceptor({required CacheOptions options})
-      : assert(options.store != null),
-        _options = options,
-        _store = options.store!;
+    : assert(options.store != null),
+      _options = options,
+      _store = options.store!;
 
   @override
   void onRequest(
@@ -89,10 +89,7 @@ class DioCacheInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(
-    Response response,
-    ResponseInterceptorHandler handler,
-  ) async {
+  void onResponse(Response response, ResponseInterceptorHandler handler) async {
     try {
       final cacheOptions = _getCacheOptions(response.requestOptions);
 
@@ -107,9 +104,9 @@ class DioCacheInterceptor extends Interceptor {
 
       if (cacheOptions.policy == CachePolicy.noCache) {
         // Delete previous potential cached response
-        await _getCacheStore(cacheOptions).delete(
-          _getCacheKey(cacheOptions, response.requestOptions),
-        );
+        await _getCacheStore(
+          cacheOptions,
+        ).delete(_getCacheKey(cacheOptions, response.requestOptions));
       }
 
       // Is status 304 being set as valid status?
@@ -118,6 +115,11 @@ class DioCacheInterceptor extends Interceptor {
         final cacheResponse = await _loadResponse(response.requestOptions);
         if (cacheResponse != null) {
           response = cacheResponse..updateCacheHeaders(response);
+        } else {
+          // No cached entry to update (evicted or never stored) — a 304 with
+          // no body cannot be turned into a usable entry; pass it through.
+          handler.next(response);
+          return;
         }
       }
 
@@ -141,10 +143,7 @@ class DioCacheInterceptor extends Interceptor {
   }
 
   @override
-  void onError(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) async {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     try {
       final cacheOptions = _getCacheOptions(err.requestOptions);
 
