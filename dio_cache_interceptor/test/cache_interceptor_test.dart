@@ -376,6 +376,35 @@ void main() {
     expect(cacheResp?.eTag, equals('5678'));
   });
 
+  test(
+    'toCacheResponse does not crash when extraRequestSentDateKey is absent',
+    () async {
+      // Simulates DioCacheInterceptor.onRequest being bypassed.
+      final request = RequestOptions(
+        path: '${MockHttpClientAdapter.mockBase}/ok',
+      );
+      // extraRequestSentDateKey is intentionally absent from request.extra.
+      expect(request.extra.containsKey(extraRequestSentDateKey), isFalse);
+
+      final response = Response<dynamic>(
+        data: {'path': '/ok'},
+        statusCode: 200,
+        requestOptions: request,
+        headers: Headers.fromMap({
+          Headers.contentTypeHeader: [Headers.jsonContentType],
+          'etag': ['1234'],
+        }),
+      );
+
+      final cacheResp = await response.toCacheResponse(
+        key: 'test_key',
+        options: CacheOptions(store: MemCacheStore()),
+      );
+
+      expect(cacheResp.requestDate, isNotNull);
+    },
+  );
+
   group('store exception handling', () {
     test(
       'store.get() throwing in onRequest rejects with DioException',

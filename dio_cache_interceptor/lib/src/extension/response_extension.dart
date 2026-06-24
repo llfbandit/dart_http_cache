@@ -14,10 +14,7 @@ extension ResponseExtension on Response {
     final expires = getExpiresHeaderValue(headers[expiresHeader]?.join(','));
 
     final h = utf8.encode(jsonEncode(headers.map));
-    final content = await serializeContent(
-      requestOptions.responseType,
-      data,
-    );
+    final content = await serializeContent(requestOptions.responseType, data);
 
     return CacheResponse(
       cacheControl: CacheControl.fromHeader(headers[cacheControlHeader]),
@@ -32,7 +29,9 @@ extension ResponseExtension on Response {
           ? DateTime.now().toUtc().add(options.maxStale!)
           : null,
       priority: options.priority,
-      requestDate: requestOptions.extra[extraRequestSentDateKey],
+      requestDate:
+          requestOptions.extra[extraRequestSentDateKey] as DateTime? ??
+          DateTime.now().toUtc(),
       responseDate: DateTime.now().toUtc(),
       url: requestOptions.uri.toString(),
       statusCode: statusCode!,
