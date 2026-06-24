@@ -334,4 +334,139 @@ void main() {
     );
     expect(cacheResp?.eTag, equals('5678'));
   });
+
+  group('store exception handling', () {
+    test('store.get() throwing in onRequest rejects with DioException', () async {
+      dio.interceptors.clear();
+      dio.interceptors.add(
+        DioCacheInterceptor(options: CacheOptions(store: _ThrowingOnGetStore())),
+      );
+
+      expect(
+        () => dio.get('${MockHttpClientAdapter.mockBase}/ok'),
+        throwsA(isA<DioException>()),
+      );
+    });
+
+    test('store.set() throwing in onResponse rejects with DioException', () async {
+      dio.interceptors.clear();
+      dio.interceptors.add(
+        DioCacheInterceptor(options: CacheOptions(store: _ThrowingOnSetStore())),
+      );
+
+      expect(
+        () => dio.get('${MockHttpClientAdapter.mockBase}/ok'),
+        throwsA(isA<DioException>()),
+      );
+    });
+
+    test('store.get() throwing in onError does not hang — completes with DioException', () async {
+      dio.interceptors.clear();
+      dio.interceptors.add(
+        DioCacheInterceptor(
+          options: CacheOptions(
+            store: _ThrowingOnGetStore(),
+            hitCacheOnNetworkFailure: true,
+          ),
+        ),
+      );
+
+      // Must complete (not hang) and produce a DioException.
+      expect(
+        () => dio.get(
+          '${MockHttpClientAdapter.mockBase}/exception',
+          options: Options(extra: {'x-err': '500'}),
+        ),
+        throwsA(isA<DioException>()),
+      );
+    });
+  });
+}
+
+/// Store that throws on [get] to simulate read failures.
+class _ThrowingOnGetStore implements CacheStore {
+  @override
+  Future<void> clean({
+    CachePriority priorityOrBelow = CachePriority.high,
+    bool staleOnly = false,
+  }) async {}
+
+  @override
+  Future<void> close() async {}
+
+  @override
+  Future<void> delete(String key, {bool staleOnly = false}) async {}
+
+  @override
+  Future<bool> exists(String key) async => false;
+
+  @override
+  Future<CacheResponse?> get(String key) =>
+      Future.error(Exception('Store read failure'));
+
+  @override
+  Future<void> set(CacheResponse response) async {}
+
+  @override
+  Future<List<CacheResponse>> getFromPath(
+    RegExp pathPattern, {
+    Map<String, String?>? queryParams,
+  }) async => [];
+
+  @override
+  Future<void> deleteFromPath(
+    RegExp pathPattern, {
+    Map<String, String?>? queryParams,
+  }) async {}
+
+  @override
+  bool pathExists(
+    String url,
+    RegExp pathPattern, {
+    Map<String, String?>? queryParams,
+  }) => false;
+}
+
+/// Store that throws on [set] to simulate write failures (reads succeed with null).
+class _ThrowingOnSetStore implements CacheStore {
+  @override
+  Future<void> clean({
+    CachePriority priorityOrBelow = CachePriority.high,
+    bool staleOnly = false,
+  }) async {}
+
+  @override
+  Future<void> close() async {}
+
+  @override
+  Future<void> delete(String key, {bool staleOnly = false}) async {}
+
+  @override
+  Future<bool> exists(String key) async => false;
+
+  @override
+  Future<CacheResponse?> get(String key) async => null;
+
+  @override
+  Future<void> set(CacheResponse response) =>
+      Future.error(Exception('Store write failure'));
+
+  @override
+  Future<List<CacheResponse>> getFromPath(
+    RegExp pathPattern, {
+    Map<String, String?>? queryParams,
+  }) async => [];
+
+  @override
+  Future<void> deleteFromPath(
+    RegExp pathPattern, {
+    Map<String, String?>? queryParams,
+  }) async {}
+
+  @override
+  bool pathExists(
+    String url,
+    RegExp pathPattern, {
+    Map<String, String?>? queryParams,
+  }) => false;
 }
