@@ -13,7 +13,7 @@ class CacheResponse {
   final CacheControl cacheControl;
 
   /// Response body
-  List<int>? content;
+  final List<int>? content;
 
   /// Response Date header
   final DateTime? date;
@@ -25,7 +25,7 @@ class CacheResponse {
   final DateTime? expires;
 
   /// Response headers
-  List<int>? headers;
+  final List<int>? headers;
 
   /// Key used by store
   final String key;
@@ -85,8 +85,8 @@ class CacheResponse {
 
     final maxStaleMillis =
         (!cacheControl.mustRevalidate && rqCacheCtrl.maxStale > -1)
-            ? rqCacheCtrl.maxStale * 1000
-            : 0;
+        ? rqCacheCtrl.maxStale * 1000
+        : 0;
     final minFreshMillis = max(0, rqCacheCtrl.minFresh * 1000);
 
     if (!cacheControl.noCache &&
@@ -134,8 +134,9 @@ class CacheResponse {
     final receivedResponseMillis = responseDate.millisecondsSinceEpoch;
     final dateMillis = date?.millisecondsSinceEpoch;
 
-    final apparentReceivedAge =
-        (dateMillis != null) ? max(0, receivedResponseMillis - dateMillis) : 0;
+    final apparentReceivedAge = (dateMillis != null)
+        ? max(0, receivedResponseMillis - dateMillis)
+        : 0;
 
     final headers = getHeaders();
     final ageValue = headers[ageHeader];
@@ -164,8 +165,9 @@ class CacheResponse {
 
     final checkedExpires = expires;
     if (checkedExpires != null) {
-      final delta =
-          checkedExpires.difference(date ?? responseDate).inMilliseconds;
+      final delta = checkedExpires
+          .difference(date ?? responseDate)
+          .inMilliseconds;
       return delta > 0 ? delta : 0;
     }
 
@@ -195,10 +197,12 @@ class CacheResponse {
     final cipher = options.cipher;
 
     return copyWith(
-      content:
-          readBody ? await cipher?.decryptContent(content) ?? content : null,
-      headers:
-          readHeaders ? await cipher?.decryptContent(headers) ?? headers : null,
+      content: readBody
+          ? await cipher?.decryptContent(content) ?? content
+          : null,
+      headers: readHeaders
+          ? await cipher?.decryptContent(headers) ?? headers
+          : null,
     );
   }
 
