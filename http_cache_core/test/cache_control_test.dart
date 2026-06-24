@@ -131,6 +131,13 @@ void main() {
     );
   });
 
+  test('equal instances have the same hashCode', () {
+    final cc = CacheControl(maxAge: 60, noCache: true, other: ['x-custom']);
+    final copy = CacheControl(maxAge: 60, noCache: true, other: ['x-custom']);
+    expect(cc, equals(copy));
+    expect(cc.hashCode, equals(copy.hashCode));
+  });
+
   test('CacheControl.fromString', () {
     final cacheControl1 = CacheControl(
       maxAge: 1,

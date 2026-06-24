@@ -231,5 +231,10 @@ void main() {
 
       expect(copy, cacheResponse);
     });
+
+    test('equal instances have the same hashCode', () {
+      final copy = cacheResponse.copyWith();
+      expect(copy.hashCode, equals(cacheResponse.hashCode));
+    });
   });
 }

@@ -165,10 +165,11 @@ class CacheControl {
     return header.join(', ');
   }
 
+  static const _eq = DeepCollectionEquality();
+
   @override
   bool operator ==(covariant CacheControl other) {
     if (identical(this, other)) return true;
-    final listEquals = const DeepCollectionEquality().equals;
 
     return other.maxAge == maxAge &&
         other.privacy == privacy &&
@@ -177,7 +178,7 @@ class CacheControl {
         other.maxStale == maxStale &&
         other.minFresh == minFresh &&
         other.mustRevalidate == mustRevalidate &&
-        listEquals(other.other, this.other);
+        _eq.equals(other.other, this.other);
   }
 
   @override
@@ -189,6 +190,6 @@ class CacheControl {
         maxStale.hashCode ^
         minFresh.hashCode ^
         mustRevalidate.hashCode ^
-        other.hashCode;
+        Object.hashAll(other);
   }
 }

@@ -245,17 +245,18 @@ class CacheResponse {
     );
   }
 
+  static const _eq = DeepCollectionEquality();
+
   @override
   bool operator ==(covariant CacheResponse other) {
     if (identical(this, other)) return true;
-    final listEquals = const DeepCollectionEquality().equals;
 
     return other.cacheControl == cacheControl &&
-        listEquals(other.content, content) &&
+        _eq.equals(other.content, content) &&
         other.date == date &&
         other.eTag == eTag &&
         other.expires == expires &&
-        listEquals(other.headers, headers) &&
+        _eq.equals(other.headers, headers) &&
         other.key == key &&
         other.lastModified == lastModified &&
         other.maxStale == maxStale &&
