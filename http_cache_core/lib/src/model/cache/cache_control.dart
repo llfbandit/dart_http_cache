@@ -8,6 +8,8 @@ final _knownAttributes = RegExp(
 
 const _maxAgeHeader = 'max-age';
 const _maxStaleHeader = 'max-stale';
+// https://datatracker.ietf.org/doc/html/rfc7234#section-5.2.1.2: bare max-stale (no delta-seconds) means accept any stale age.
+const _maxStaleUnlimited = 315360000; // 10 years in seconds
 const _minFreshHeader = 'min-fresh';
 const _mustRevalidateHeader = 'must-revalidate';
 const _privateHeader = 'private';
@@ -139,7 +141,9 @@ class CacheControl {
 
     return CacheControl(
       maxAge: int.tryParse(parameters[_maxAgeHeader] ?? '') ?? -1,
-      maxStale: int.tryParse(parameters[_maxStaleHeader] ?? '') ?? -1,
+      maxStale: parameters.containsKey(_maxStaleHeader)
+          ? (int.tryParse(parameters[_maxStaleHeader]!) ?? _maxStaleUnlimited)
+          : -1,
       minFresh: int.tryParse(parameters[_minFreshHeader] ?? '') ?? -1,
       mustRevalidate: parameters.containsKey(_mustRevalidateHeader),
       privacy: parameters[_publicHeader] ?? parameters[_privateHeader],
@@ -154,7 +158,11 @@ class CacheControl {
     final header = <String>[];
 
     if (maxAge != -1) header.add('$_maxAgeHeader=$maxAge');
-    if (maxStale != -1) header.add('$_maxStaleHeader=$maxStale');
+    if (maxStale == _maxStaleUnlimited) {
+      header.add(_maxStaleHeader);
+    } else if (maxStale != -1) {
+      header.add('$_maxStaleHeader=$maxStale');
+    }
     if (minFresh != -1) header.add('$_minFreshHeader=$minFresh');
     if (mustRevalidate) header.add(_mustRevalidateHeader);
     if (privacy != null) header.add(privacy!);

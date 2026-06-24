@@ -5,8 +5,8 @@ DateTime? getExpiresHeaderValue(String? headerValue) {
     try {
       return HttpDate.parse(expires);
     } catch (_) {
-      // Invalid date format => meaning something already expired
-      return DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true);
+      // Malformed Expires header
+      // Treat as absent so other freshness signals (max-age, Last-Modified heuristic) are still evaluated.
     }
   }
 

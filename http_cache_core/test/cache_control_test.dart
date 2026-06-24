@@ -105,6 +105,14 @@ void main() {
       bare.maxStale * 1000,
       greaterThan(Duration(days: 365).inMilliseconds),
     );
+
+    // Round-trip: bare max-stale must serialise back as bare max-stale, not
+    // as max-stale=315360000.
+    expect(bare.toHeader(), equals('max-stale'));
+    expect(
+      CacheControl.fromHeader([bare.toHeader()]).maxStale,
+      equals(bare.maxStale),
+    );
   });
 
   test('fromHeader tolerates non-token characters (e.g. CDN extensions)', () {

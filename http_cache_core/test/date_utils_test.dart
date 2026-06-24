@@ -14,11 +14,9 @@ void main() {
       );
     });
 
-    test('returns DateTime when invalid', () {
-      expect(
-        getExpiresHeaderValue('Thu, 1 Jan 1972'),
-        equals(DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true)),
-      );
+    test('returns null when invalid (malformed header treated as absent)', () {
+      expect(getExpiresHeaderValue('Thu, 1 Jan 1972'), isNull);
+      expect(getExpiresHeaderValue('not-a-date'), isNull);
     });
   });
 
