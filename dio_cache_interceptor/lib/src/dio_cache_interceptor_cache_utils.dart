@@ -133,9 +133,15 @@ extension _DioCacheInterceptorUtils on DioCacheInterceptor {
   }
 
   String _getCacheKey(CacheOptions options, RequestOptions request) {
+    // Strip validation headers that CacheStrategyFactory injects into the
+    // request before forwarding it to the network.
+    final headers = Map<String, String>.from(request.getFlattenHeaders())
+      ..remove(ifNoneMatchHeader)
+      ..remove(ifModifiedSinceHeader);
+
     return options.keyBuilder(
       url: request.uri,
-      headers: request.getFlattenHeaders(),
+      headers: headers,
       body: request.data,
     );
   }

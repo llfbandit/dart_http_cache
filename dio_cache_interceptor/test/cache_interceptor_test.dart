@@ -406,6 +406,36 @@ void main() {
   );
 
   test(
+    'custom keyBuilder: if-none-match is stripped before being passed to keyBuilder',
+    () async {
+      final customOptions = CacheOptions(
+        store: store,
+        keyBuilder:
+            ({required Uri url, Map<String, String>? headers, Object? body}) =>
+                '${url.path}:${headers?[ifNoneMatchHeader] ?? ''}',
+      );
+
+      dio.interceptors.clear();
+      dio.interceptors.add(DioCacheInterceptor(options: customOptions));
+
+      // First request: cache miss — no if-none-match yet → key is '/ok:'.
+      final resp1 = await dio.get('${MockHttpClientAdapter.mockBase}/ok');
+      expect(resp1.statusCode, equals(200));
+      final key1 = resp1.extra[extraCacheKey] as String;
+      expect(key1, equals('/ok:'));
+
+      // Second request: cache is expired (no max-age) — interceptor injects
+      // if-none-match: 1234.  Without the fix, _saveResponse stores at '/ok:1234'.
+      final resp2 = await dio.get('${MockHttpClientAdapter.mockBase}/ok');
+      expect(resp2.statusCode, equals(200));
+      final key2 = resp2.extra[extraCacheKey] as String?;
+
+      // Key must be stable — if-none-match must be stripped before keyBuilder.
+      expect(key2, equals(key1));
+    },
+  );
+
+  test(
     'repeated cache hits with maxStale do not write to the store on every hit',
     () async {
       final countingStore = _CountingStore(MemCacheStore());
