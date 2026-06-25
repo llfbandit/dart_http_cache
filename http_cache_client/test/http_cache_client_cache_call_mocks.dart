@@ -18,12 +18,16 @@ Future<http.Response> getOk(
         request.headers.containsKey('x-err')
             ? 500
             : request.headers.containsKey(ifNoneMatchHeader)
-                ? 304
-                : 200,
+            ? 304
+            : 200,
         headers: {
           contentTypeHeader: jsonContentType,
-          etagHeader: request.headers.containsKey(ifNoneMatchHeader) ? '5678' : '1234',
-          ageHeader: request.headers.containsKey(ifNoneMatchHeader) ? '10' : '1',
+          etagHeader: request.headers.containsKey(ifNoneMatchHeader)
+              ? '5678'
+              : '1234',
+          ageHeader: request.headers.containsKey(ifNoneMatchHeader)
+              ? '10'
+              : '1',
           dateHeader: HttpDate.format(DateTime.now()),
         },
         request: request,
@@ -33,6 +37,34 @@ Future<http.Response> getOk(
   );
 
   return client.get(url, headers: headers);
+}
+
+/// Issues a GET through the low-level [CacheClient.send] entry point.
+Future<http.Response> sendGet(CacheOptions options) async {
+  final url = Uri.http('ok.org', '/ok');
+
+  var client = CacheClient(
+    MockClient(
+      (request) async => http.Response(
+        jsonEncode({'path': request.url.path}),
+        request.headers.containsKey(ifNoneMatchHeader) ? 304 : 200,
+        headers: {
+          contentTypeHeader: jsonContentType,
+          etagHeader: request.headers.containsKey(ifNoneMatchHeader)
+              ? '5678'
+              : '1234',
+          ageHeader: request.headers.containsKey(ifNoneMatchHeader)
+              ? '10'
+              : '1',
+          dateHeader: HttpDate.format(DateTime.now()),
+        },
+        request: request,
+      ),
+    ),
+    options: options,
+  );
+
+  return http.Response.fromStream(await client.send(http.Request('GET', url)));
 }
 
 Future<http.Response> download(CacheOptions options) {
@@ -92,7 +124,9 @@ Future<http.Response> cacheControl(CacheOptions options) {
           etagHeader: '9875',
           cacheControlHeader: 'public, max-age=0',
           dateHeader: 'Wed, 21 Oct 2000 07:28:00 GMT',
-          expiresHeader: HttpDate.format(DateTime.now().add(Duration(days: 10)))
+          expiresHeader: HttpDate.format(
+            DateTime.now().add(Duration(days: 10)),
+          ),
         },
         request: request,
       ),
@@ -115,7 +149,9 @@ Future<http.Response> cacheControlExpired(CacheOptions options) {
           contentTypeHeader: jsonContentType,
           etagHeader: '9875',
           cacheControlHeader: 'public',
-          expiresHeader: HttpDate.format(DateTime.now().add(Duration(days: 10)))
+          expiresHeader: HttpDate.format(
+            DateTime.now().add(Duration(days: 10)),
+          ),
         },
         request: request,
       ),
@@ -138,7 +174,9 @@ Future<http.Response> cacheControlNoStore(CacheOptions options) {
           contentTypeHeader: jsonContentType,
           etagHeader: '9875',
           cacheControlHeader: 'no-store',
-          expiresHeader: HttpDate.format(DateTime.now().add(Duration(days: 10)))
+          expiresHeader: HttpDate.format(
+            DateTime.now().add(Duration(days: 10)),
+          ),
         },
         request: request,
       ),
@@ -178,24 +216,22 @@ Future<http.Response> getException(
   final url = Uri.http('ok.org', '/exception');
 
   var client = CacheClient(
-    MockClient(
-      (request) async {
-        if (headers != null && headers.containsKey('x-err')) {
-          throw http.ClientException('socket exception');
-        }
+    MockClient((request) async {
+      if (headers != null && headers.containsKey('x-err')) {
+        throw http.ClientException('socket exception');
+      }
 
-        return http.Response(
-          jsonEncode({'path': request.url.path}),
-          200,
-          headers: {
-            contentTypeHeader: jsonContentType,
-            etagHeader: '1234',
-            dateHeader: HttpDate.format(DateTime.now()),
-          },
-          request: request,
-        );
-      },
-    ),
+      return http.Response(
+        jsonEncode({'path': request.url.path}),
+        200,
+        headers: {
+          contentTypeHeader: jsonContentType,
+          etagHeader: '1234',
+          dateHeader: HttpDate.format(DateTime.now()),
+        },
+        request: request,
+      );
+    }),
     options: options,
   );
 
@@ -209,25 +245,23 @@ Future<http.Response> getNonClientError(
   final url = Uri.http('ok.org', '/ok');
 
   var client = CacheClient(
-    MockClient(
-      (request) async {
-        if (headers != null && headers.containsKey('x-err')) {
-          // Not a http.ClientException — e.g. a raw socket/timeout error.
-          throw StateError('non-client error');
-        }
+    MockClient((request) async {
+      if (headers != null && headers.containsKey('x-err')) {
+        // Not a http.ClientException — e.g. a raw socket/timeout error.
+        throw StateError('non-client error');
+      }
 
-        return http.Response(
-          jsonEncode({'path': request.url.path}),
-          200,
-          headers: {
-            contentTypeHeader: jsonContentType,
-            etagHeader: '1234',
-            dateHeader: HttpDate.format(DateTime.now()),
-          },
-          request: request,
-        );
-      },
-    ),
+      return http.Response(
+        jsonEncode({'path': request.url.path}),
+        200,
+        headers: {
+          contentTypeHeader: jsonContentType,
+          etagHeader: '1234',
+          dateHeader: HttpDate.format(DateTime.now()),
+        },
+        request: request,
+      );
+    }),
     options: options,
   );
 
@@ -242,9 +276,7 @@ Future<http.Response> getOkNoDirective(CacheOptions options) {
       (request) async => http.Response(
         jsonEncode({'path': request.url.path}),
         200,
-        headers: {
-          contentTypeHeader: jsonContentType,
-        },
+        headers: {contentTypeHeader: jsonContentType},
         request: request,
       ),
     ),

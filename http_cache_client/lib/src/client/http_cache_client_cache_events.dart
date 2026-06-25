@@ -4,22 +4,9 @@ const String _getMethod = 'GET';
 const String _postMethod = 'POST';
 
 extension _CacheClientEvents on CacheClient {
-  Future<http.Response> _onRequest(
-    String method,
-    Uri url,
-    Map<String, String>? headers,
-    CacheOptions options, [
-    Object? body,
-    Encoding? encoding,
-  ]) async {
-    final request = _prepareRequest(
-      options,
-      method,
-      url,
-      headers,
-      body,
-      encoding,
-    );
+  Future<http.Response> _onRequest(HttpBaseRequest request) async {
+    final options = request.options;
+    final method = request.inner.method;
 
     if (!_shouldSkip(method, options)) {
       // Early ends if policy does not require cache lookup.
