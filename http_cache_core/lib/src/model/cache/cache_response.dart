@@ -97,25 +97,29 @@ class CacheResponse {
     return true;
   }
 
-  Map<String, String> getHeaders() {
-    if (headers case final headers?) {
-      final map = jsonDecode(utf8.decode(headers));
+  late final Map<String, String> _cachedHeaders = _parseHeaders();
+
+  Map<String, String> getHeaders() => _cachedHeaders;
+
+  Map<String, String> _parseHeaders() {
+    if (headers case final h?) {
+      final map = jsonDecode(utf8.decode(h));
 
       /// Get headers flatten to String & case insensitive
-      final h = LinkedHashMap<String, String>(
+      final result = LinkedHashMap<String, String>(
         equals: (a, b) => a.toLowerCase() == b.toLowerCase(),
         hashCode: (key) => key.toLowerCase().hashCode,
       );
 
       for (var header in map.entries) {
         if (header.value is Iterable) {
-          h[header.key] = header.value.join(',');
+          result[header.key] = header.value.join(',');
         } else if (header.value != null) {
-          h[header.key] = header.value.toString();
+          result[header.key] = header.value.toString();
         }
       }
 
-      return h;
+      return result;
     }
 
     return {};

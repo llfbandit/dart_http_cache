@@ -157,6 +157,17 @@ void main() {
       expect(headers['age'], '10');
     });
 
+    test('getHeaders is memoized — repeated calls return the same instance', () {
+      cacheResponse = cacheResponse.copyWith(
+        headers: utf8.encode('{"content-type": "application/json"}'),
+      );
+
+      final first = cacheResponse.getHeaders();
+      final second = cacheResponse.getHeaders();
+
+      expect(identical(first, second), isTrue);
+    });
+
     test('copyWith creates a new instance with updated values', () {
       final newCacheResponse = cacheResponse.copyWith(eTag: 'new_etag');
 
