@@ -448,5 +448,63 @@ void main() {
       expect(request.headers[ifNoneMatchHeader], isNull);
       expect(request.headers[ifModifiedSinceHeader], isNotNull);
     });
+
+    test('compute does not cache responses with non-allowed status codes',
+        () async {
+      Future<CacheStrategy> computeStrategy(int statusCode) {
+        final request = MockRequest(url: Uri.parse('https://ok.org'));
+        final response = MockResponse(
+          statusCode: statusCode,
+          eTag: 'abc',
+          headers: {
+            etagHeader: ['abc'],
+          },
+        );
+        return CacheStrategyFactory(
+          request: request,
+          cacheOptions: cacheOptions,
+          response: response,
+        ).compute(
+          cacheResponseBuilder: () async =>
+              cacheResponsefrom(cacheOptions, request, response),
+        );
+      }
+
+      for (final code in [400, 401, 403, 500, 502, 503]) {
+        final strategy = await computeStrategy(code);
+        expect(strategy.cacheResponse, isNull,
+            reason: 'status $code should not be cached');
+        expect(strategy.request, isNotNull,
+            reason: 'status $code should fall through to network');
+      }
+    });
+
+    test('compute caches responses with allowed status codes', () async {
+      Future<CacheStrategy> computeStrategy(int statusCode) {
+        final request = MockRequest(url: Uri.parse('https://ok.org'));
+        final response = MockResponse(
+          statusCode: statusCode,
+          eTag: 'abc',
+          headers: {
+            etagHeader: ['abc'],
+            'cache-control': ['max-age=3600'],
+          },
+        );
+        return CacheStrategyFactory(
+          request: request,
+          cacheOptions: cacheOptions,
+          response: response,
+        ).compute(
+          cacheResponseBuilder: () async =>
+              cacheResponsefrom(cacheOptions, request, response),
+        );
+      }
+
+      for (final code in [200, 203, 301, 404, 405, 501]) {
+        final strategy = await computeStrategy(code);
+        expect(strategy.cacheResponse, isNotNull,
+            reason: 'status $code should be cached');
+      }
+    });
   });
 }

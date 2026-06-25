@@ -137,6 +137,7 @@ class CacheStrategyFactory {
     // Always go to network for uncacheable response codes
     final statusCode = response.statusCode;
     if (statusCode == null) return false;
+    if (!allowedStatusCodes.contains(statusCode)) return false;
 
     // Skip download
     if (response.isAttachment()) return false;
