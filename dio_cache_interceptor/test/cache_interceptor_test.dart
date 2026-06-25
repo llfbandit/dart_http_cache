@@ -324,6 +324,18 @@ void main() {
   });
 
   test(
+    'conditional headers set by cache strategy are forwarded to the server',
+    () async {
+      // Prime cache — mock returns etag 1234.
+      await dio.get('${MockHttpClientAdapter.mockBase}/ok');
+
+      // Second request: cache is expired.
+      final resp = await dio.get('${MockHttpClientAdapter.mockBase}/ok');
+      expect(resp.headers['etag'], equals(['5678']));
+    },
+  );
+
+  test(
     'Fetch 304 with evicted cache entry is passed through without storing',
     () async {
       // Prime the cache so we know the etag.

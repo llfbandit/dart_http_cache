@@ -72,13 +72,8 @@ class DioCacheInterceptor extends Interceptor {
           true,
         );
       } else {
-        // Requests with conditional request if available
-        // or requests with given options
-        if (strategy.request is DioBaseRequest) {
-          handler.next((strategy.request as DioBaseRequest).request);
-        } else {
-          handler.next(options);
-        }
+        // Forward with any conditional headers.
+        handler.next((strategy.request as DioBaseRequest).request);
       }
     } catch (e, st) {
       handler.reject(
