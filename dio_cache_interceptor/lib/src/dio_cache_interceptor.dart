@@ -19,16 +19,28 @@ class DioCacheInterceptor extends Interceptor {
       _options = options,
       _store = options.store!;
 
-  @override
-  void onRequest(
+  /// Runs [body] and converts any thrown error into a rejected [DioException]
+  /// via [reject]. Centralizes cache-failure handling for the request/response
+  /// hooks so a store exception surfaces as an error instead of hanging.
+  Future<void> _guard(
     RequestOptions options,
-    RequestInterceptorHandler handler,
+    Future<void> Function() body,
+    void Function(DioException error) reject,
   ) async {
+    try {
+      await body();
+    } catch (e, st) {
+      reject(DioException(requestOptions: options, error: e, stackTrace: st));
+    }
+  }
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     // Add time when the request has been sent
     // for further expiry calculation.
     options.extra[extraRequestSentDateKey] = DateTime.now();
 
-    try {
+    _guard(options, () async {
       final cacheOptions = _getCacheOptions(options);
 
       if (_shouldSkip(options, options: cacheOptions)) {
@@ -75,17 +87,12 @@ class DioCacheInterceptor extends Interceptor {
         // Forward with any conditional headers.
         handler.next((strategy.request as DioBaseRequest).request);
       }
-    } catch (e, st) {
-      handler.reject(
-        DioException(requestOptions: options, error: e, stackTrace: st),
-        true,
-      );
-    }
+    }, (err) => handler.reject(err, true));
   }
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) async {
-    try {
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    _guard(response.requestOptions, () async {
       final cacheOptions = _getCacheOptions(response.requestOptions);
 
       if (_shouldSkip(
@@ -125,16 +132,7 @@ class DioCacheInterceptor extends Interceptor {
       );
 
       handler.next(response);
-    } catch (e, st) {
-      handler.reject(
-        DioException(
-          requestOptions: response.requestOptions,
-          error: e,
-          stackTrace: st,
-        ),
-        true,
-      );
-    }
+    }, (err) => handler.reject(err, true));
   }
 
   @override
@@ -169,7 +167,6 @@ class DioCacheInterceptor extends Interceptor {
 
       handler.next(err);
     } catch (_) {
-      // Cache operation failed — propagate the original network error.
       handler.next(err);
     }
   }

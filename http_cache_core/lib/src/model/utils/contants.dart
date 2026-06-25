@@ -7,6 +7,8 @@ const contentLocationHeader = 'content-location';
 const varyHeader = 'vary';
 const ifModifiedSinceHeader = 'if-modified-since';
 const ifNoneMatchHeader = 'if-none-match';
+
+const conditionalRequestHeaders = [ifNoneMatchHeader, ifModifiedSinceHeader];
 const lastModifiedHeader = 'last-modified';
 const contentTypeHeader = 'content-type';
 

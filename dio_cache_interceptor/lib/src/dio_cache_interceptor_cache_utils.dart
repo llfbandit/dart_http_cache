@@ -108,7 +108,8 @@ extension _DioCacheInterceptorUtils on DioCacheInterceptor {
   ) async {
     final maxStaleUpdate = cacheOptions.maxStale;
     if (maxStaleUpdate != null) {
-      final newMaxStale = DateTime.now().toUtc().add(maxStaleUpdate);
+      final now = DateTime.now().toUtc();
+      final newMaxStale = now.add(maxStaleUpdate);
 
       // Only persist if the remaining lifetime is less than half the window.
       // This avoids a full encrypt + store write on every single cache hit.
@@ -118,7 +119,8 @@ extension _DioCacheInterceptorUtils on DioCacheInterceptor {
       final existingMaxStale = cacheResponse.maxStale;
       final needsWrite =
           existingMaxStale == null ||
-          existingMaxStale.isBefore(DateTime.now().toUtc().add(halfWindow));
+          existingMaxStale.isBefore(now.add(halfWindow)) ||
+          newMaxStale.isBefore(existingMaxStale);
 
       cacheResponse = cacheResponse.copyWith(maxStale: newMaxStale);
 
@@ -135,9 +137,8 @@ extension _DioCacheInterceptorUtils on DioCacheInterceptor {
   String _getCacheKey(CacheOptions options, RequestOptions request) {
     // Strip validation headers that CacheStrategyFactory injects into the
     // request before forwarding it to the network.
-    final headers = Map<String, String>.from(request.getFlattenHeaders())
-      ..remove(ifNoneMatchHeader)
-      ..remove(ifModifiedSinceHeader);
+    final headers = Map<String, String>.from(request.getFlattenHeaders());
+    headers.removeWhere((key, _) => conditionalRequestHeaders.contains(key));
 
     return options.keyBuilder(
       url: request.uri,
