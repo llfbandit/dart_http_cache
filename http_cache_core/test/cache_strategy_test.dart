@@ -7,7 +7,7 @@ class MockRequest extends BaseRequest {
   final Uri url;
 
   MockRequest({required this.url, Map<String, String>? headers})
-      : headers = headers ?? {};
+    : headers = headers ?? {};
 
   @override
   final Map<String, String> headers;
@@ -52,12 +52,12 @@ class MockResponse extends BaseResponse {
 
 void main() {
   CacheResponse cacheResponsefrom(
-      CacheOptions cacheOptions, MockRequest request, MockResponse response) {
+    CacheOptions cacheOptions,
+    MockRequest request,
+    MockResponse response,
+  ) {
     return CacheResponse(
-      key: cacheOptions.keyBuilder(
-        url: request.url,
-        headers: request.headers,
-      ),
+      key: cacheOptions.keyBuilder(url: request.url, headers: request.headers),
       cacheControl: CacheControl.fromHeader(
         response.headers[cacheControlHeader],
       ),
@@ -91,10 +91,13 @@ void main() {
         headers: {etagHeader: '1234'},
       );
       // Set up the response to be cacheable
-      final response = MockResponse(statusCode: 200, headers: {
-        'cache-control': ['public, max-age=3600'],
-        etagHeader: ['1234'],
-      });
+      final response = MockResponse(
+        statusCode: 200,
+        headers: {
+          'cache-control': ['public, max-age=3600'],
+          etagHeader: ['1234'],
+        },
+      );
       final cacheResponse = cacheResponsefrom(cacheOptions, request, response);
 
       final factory = CacheStrategyFactory(
@@ -113,9 +116,12 @@ void main() {
     test('compute returns request when cache is expired', () async {
       final request = MockRequest(url: Uri.parse('https://ok.org'));
       // Set up the response to be cacheable but expired
-      final response = MockResponse(statusCode: 200, headers: {
-        'cache-control': ['public, max-age=0'],
-      });
+      final response = MockResponse(
+        statusCode: 200,
+        headers: {
+          'cache-control': ['public, max-age=0'],
+        },
+      );
 
       final cacheResponse = cacheResponsefrom(cacheOptions, request, response);
 
@@ -134,36 +140,48 @@ void main() {
       expect(strategy.cacheResponse, isNull);
     });
 
-    test('compute returns cached response when forceCache policy is set',
-        () async {
-      final request = MockRequest(url: Uri.parse('https://ok.org'));
-      // Set up the response to be cacheable
-      final response = MockResponse(statusCode: 200, headers: {
-        'cache-control': ['public, max-age=3600'],
-      });
-      cacheOptions = cacheOptions.copyWith(policy: CachePolicy.forceCache);
-      final cacheResponse = cacheResponsefrom(cacheOptions, request, response);
+    test(
+      'compute returns cached response when forceCache policy is set',
+      () async {
+        final request = MockRequest(url: Uri.parse('https://ok.org'));
+        // Set up the response to be cacheable
+        final response = MockResponse(
+          statusCode: 200,
+          headers: {
+            'cache-control': ['public, max-age=3600'],
+          },
+        );
+        cacheOptions = cacheOptions.copyWith(policy: CachePolicy.forceCache);
+        final cacheResponse = cacheResponsefrom(
+          cacheOptions,
+          request,
+          response,
+        );
 
-      final factory = CacheStrategyFactory(
-        request: request,
-        cacheOptions: cacheOptions,
-        response: response,
-        cacheResponse: cacheResponse,
-      );
+        final factory = CacheStrategyFactory(
+          request: request,
+          cacheOptions: cacheOptions,
+          response: response,
+          cacheResponse: cacheResponse,
+        );
 
-      final strategy = await factory.compute();
+        final strategy = await factory.compute();
 
-      expect(strategy.request, isNull);
-      expect(strategy.cacheResponse, isNotNull);
-      expect(strategy.cacheResponse, equals(cacheResponse));
-    });
+        expect(strategy.request, isNull);
+        expect(strategy.cacheResponse, isNotNull);
+        expect(strategy.cacheResponse, equals(cacheResponse));
+      },
+    );
 
     test('compute returns cached response when valid', () async {
       final request = MockRequest(url: Uri.parse('https://ok.org'));
       // Set up the response to be cacheable
-      final response = MockResponse(statusCode: 200, headers: {
-        'cache-control': ['public, max-age=3600'],
-      });
+      final response = MockResponse(
+        statusCode: 200,
+        headers: {
+          'cache-control': ['public, max-age=3600'],
+        },
+      );
 
       final factory = CacheStrategyFactory(
         request: request,
@@ -172,35 +190,44 @@ void main() {
       );
 
       final strategy = await factory.compute(
-          cacheResponseBuilder: () async =>
-              cacheResponsefrom(cacheOptions, request, response));
+        cacheResponseBuilder: () async =>
+            cacheResponsefrom(cacheOptions, request, response),
+      );
 
       expect(strategy.request, isNull);
       expect(strategy.cacheResponse, isNotNull);
     });
 
     test(
-        'compute returns request when no cache response and cache is not valid',
-        () async {
-      final request = MockRequest(url: Uri.parse('https://ok.org'));
-      // Set up the response to be non-cacheable
-      final response = MockResponse(statusCode: 200, headers: {
-        'cache-control': ['no-store'],
-      });
-      final cacheResponse = cacheResponsefrom(cacheOptions, request, response);
+      'compute returns request when no cache response and cache is not valid',
+      () async {
+        final request = MockRequest(url: Uri.parse('https://ok.org'));
+        // Set up the response to be non-cacheable
+        final response = MockResponse(
+          statusCode: 200,
+          headers: {
+            'cache-control': ['no-store'],
+          },
+        );
+        final cacheResponse = cacheResponsefrom(
+          cacheOptions,
+          request,
+          response,
+        );
 
-      final factory = CacheStrategyFactory(
-        request: request,
-        cacheOptions: cacheOptions,
-        response: response,
-        cacheResponse: cacheResponse,
-      );
+        final factory = CacheStrategyFactory(
+          request: request,
+          cacheOptions: cacheOptions,
+          response: response,
+          cacheResponse: cacheResponse,
+        );
 
-      final strategy = await factory.compute();
+        final strategy = await factory.compute();
 
-      expect(strategy.request, isNotNull);
-      expect(strategy.cacheResponse, isNull);
-    });
+        expect(strategy.request, isNotNull);
+        expect(strategy.cacheResponse, isNull);
+      },
+    );
 
     test('compute returns conditional request on etag', () async {
       final request = MockRequest(url: Uri.parse('https://ok.org'));
@@ -229,7 +256,7 @@ void main() {
         statusCode: 200,
         lastModified: DateTime.now(),
         headers: {
-          'cache-control': ['no-cache']
+          'cache-control': ['no-cache'],
         },
       );
       final cacheResponse = cacheResponsefrom(cacheOptions, request, response);
@@ -255,7 +282,7 @@ void main() {
         statusCode: 200,
         date: DateTime.now(),
         headers: {
-          'cache-control': ['no-cache']
+          'cache-control': ['no-cache'],
         },
       );
       final cacheResponse = cacheResponsefrom(cacheOptions, request, response);
@@ -274,78 +301,83 @@ void main() {
       expect(strategy.request!.headers[ifModifiedSinceHeader], isNotNull);
     });
 
-    test('compute returns cached response when cache is valid on 302 or 307',
-        () async {
-      Future<CacheStrategy> computeStrategy(
-        int statusCode,
-        Map<String, List<String>>? headers,
-      ) {
-        final request = MockRequest(
-          url: Uri.parse('https://ok.org'),
-          headers: {etagHeader: '1234'},
-        );
-        final response = MockResponse(statusCode: statusCode, headers: headers);
+    test(
+      'compute returns cached response when cache is valid on 302 or 307',
+      () async {
+        Future<CacheStrategy> computeStrategy(
+          int statusCode,
+          Map<String, List<String>>? headers,
+        ) {
+          final request = MockRequest(
+            url: Uri.parse('https://ok.org'),
+            headers: {etagHeader: '1234'},
+          );
+          final response = MockResponse(
+            statusCode: statusCode,
+            headers: headers,
+          );
 
-        final factory = CacheStrategyFactory(
-          request: request,
-          cacheOptions: cacheOptions,
-          response: response,
-        );
+          final factory = CacheStrategyFactory(
+            request: request,
+            cacheOptions: cacheOptions,
+            response: response,
+          );
 
-        return factory.compute(
-          cacheResponseBuilder: () async =>
-              cacheResponsefrom(cacheOptions, request, response),
-        );
-      }
+          return factory.compute(
+            cacheResponseBuilder: () async =>
+                cacheResponsefrom(cacheOptions, request, response),
+          );
+        }
 
-      Future<void> testStatusCode(int statusCode) async {
-        // public
-        var strategy = await computeStrategy(statusCode, {
-          'cache-control': ['public'],
-          etagHeader: ['1234'],
-        });
-        expect(strategy.cacheResponse, isNotNull);
+        Future<void> testStatusCode(int statusCode) async {
+          // public
+          var strategy = await computeStrategy(statusCode, {
+            'cache-control': ['public'],
+            etagHeader: ['1234'],
+          });
+          expect(strategy.cacheResponse, isNotNull);
 
-        // max-age
-        strategy = await computeStrategy(statusCode, {
-          'cache-control': ['max-age=3600'],
-          etagHeader: ['1234'],
-        });
-        expect(strategy.cacheResponse, isNotNull);
+          // max-age
+          strategy = await computeStrategy(statusCode, {
+            'cache-control': ['max-age=3600'],
+            etagHeader: ['1234'],
+          });
+          expect(strategy.cacheResponse, isNotNull);
 
-        // expires
-        strategy = await computeStrategy(statusCode, {
-          expiresHeader: [HttpDate.format(DateTime.now())],
-          etagHeader: ['1234'],
-        });
-        expect(strategy.cacheResponse, isNotNull);
+          // expires
+          strategy = await computeStrategy(statusCode, {
+            expiresHeader: [HttpDate.format(DateTime.now())],
+            etagHeader: ['1234'],
+          });
+          expect(strategy.cacheResponse, isNotNull);
 
-        // public & max-age
-        strategy = await computeStrategy(statusCode, {
-          'cache-control': ['public, max-age=3600'],
-          etagHeader: ['1234'],
-        });
-        expect(strategy.cacheResponse, isNotNull);
+          // public & max-age
+          strategy = await computeStrategy(statusCode, {
+            'cache-control': ['public, max-age=3600'],
+            etagHeader: ['1234'],
+          });
+          expect(strategy.cacheResponse, isNotNull);
 
-        // public & max-age & expires
-        strategy = await computeStrategy(statusCode, {
-          'cache-control': ['public, max-age=3600'],
-          expiresHeader: [HttpDate.format(DateTime.now())],
-          etagHeader: ['1234'],
-        });
-        expect(strategy.cacheResponse, isNotNull);
+          // public & max-age & expires
+          strategy = await computeStrategy(statusCode, {
+            'cache-control': ['public, max-age=3600'],
+            expiresHeader: [HttpDate.format(DateTime.now())],
+            etagHeader: ['1234'],
+          });
+          expect(strategy.cacheResponse, isNotNull);
 
-        // no headers (default values)
-        strategy = await computeStrategy(statusCode, {
-          etagHeader: ['1234']
-        });
-        expect(strategy.request, isNotNull);
-        expect(strategy.cacheResponse, isNull);
-      }
+          // no headers (default values)
+          strategy = await computeStrategy(statusCode, {
+            etagHeader: ['1234'],
+          });
+          expect(strategy.request, isNotNull);
+          expect(strategy.cacheResponse, isNull);
+        }
 
-      await testStatusCode(302);
-      await testStatusCode(307);
-    });
+        await testStatusCode(302);
+        await testStatusCode(307);
+      },
+    );
 
     Future<BaseRequest> testWithPreconditionRequest(
       Map<String, String> headers, {
@@ -384,100 +416,147 @@ void main() {
       testWithPreconditionRequest({cacheControlHeader: 'no-cache'});
     });
 
-    test('compute returns request from preconditions - ifModifiedSince',
-        () async {
-      await testWithPreconditionRequest(
-        {ifModifiedSinceHeader: HttpDate.format(DateTime.now())},
-      );
-    });
+    test(
+      'compute returns request from preconditions - ifModifiedSince',
+      () async {
+        await testWithPreconditionRequest({
+          ifModifiedSinceHeader: HttpDate.format(DateTime.now()),
+        });
+      },
+    );
 
     test('compute returns request from preconditions - ifNoneMatch', () async {
       await testWithPreconditionRequest({ifNoneMatchHeader: '123'});
     });
 
     test(
-        'compute returns request from preconditions - ifModifiedSince && no-cache',
-        () async {
-      await testWithPreconditionRequest(
-        {
-          ifModifiedSinceHeader: HttpDate.format(DateTime.now()),
-          cacheControlHeader: 'no-cache'
-        },
-      );
-    });
-
-    test(
-        'compute returns request from preconditions - ifNoneMatch takes precedence on ifModifiedSince',
-        () async {
-      final request = await testWithPreconditionRequest(
-        {
-          ifNoneMatchHeader: '123',
-          ifModifiedSinceHeader: HttpDate.format(DateTime.now())
-        },
-      );
-
-      expect(request.headers[ifNoneMatchHeader], isNotNull);
-      expect(request.headers[ifModifiedSinceHeader], isNull);
-    });
-
-    test(
-        'compute returns request - ifNoneMatch takes precedence on ifModifiedSince',
-        () async {
-      final request = await testWithPreconditionRequest(
-        {},
-        eTag: '123',
-        lastModified: DateTime.now().subtract(Duration(seconds: 10)),
-        date: DateTime.now().subtract(Duration(seconds: 5)),
-      );
-
-      expect(request.headers[ifNoneMatchHeader], isNotNull);
-      expect(request.headers[ifModifiedSinceHeader], isNull);
-    });
-
-    test(
-        'compute returns request - ifNoneMatch takes precedence on ifModifiedSince',
-        () async {
-      final lastModified = DateTime.now().subtract(Duration(seconds: 10));
-
-      final request = await testWithPreconditionRequest(
-        {},
-        lastModified: lastModified,
-        date: DateTime.now().subtract(Duration(seconds: 5)),
-      );
-
-      expect(request.headers[ifNoneMatchHeader], isNull);
-      expect(request.headers[ifModifiedSinceHeader], isNotNull);
-    });
-
-    test('compute does not cache responses with non-allowed status codes',
-        () async {
-      Future<CacheStrategy> computeStrategy(int statusCode) {
-        final request = MockRequest(url: Uri.parse('https://ok.org'));
+      'compute sends to network when If-None-Match is set even with a fresh cached response',
+      () async {
+        final request = MockRequest(
+          url: Uri.parse('https://ok.org'),
+          headers: {ifNoneMatchHeader: 'client-etag'},
+        );
         final response = MockResponse(
-          statusCode: statusCode,
-          eTag: 'abc',
+          statusCode: 200,
+          eTag: 'cached-etag',
           headers: {
-            etagHeader: ['abc'],
+            'cache-control': ['max-age=3600'],
+            etagHeader: ['cached-etag'],
           },
         );
-        return CacheStrategyFactory(
+        final cacheResponse = cacheResponsefrom(
+          cacheOptions,
+          request,
+          response,
+        );
+
+        final strategy = await CacheStrategyFactory(
           request: request,
           cacheOptions: cacheOptions,
-          response: response,
-        ).compute(
-          cacheResponseBuilder: () async =>
-              cacheResponsefrom(cacheOptions, request, response),
-        );
-      }
+          cacheResponse: cacheResponse,
+        ).compute();
 
-      for (final code in [400, 401, 403, 500, 502, 503]) {
-        final strategy = await computeStrategy(code);
-        expect(strategy.cacheResponse, isNull,
-            reason: 'status $code should not be cached');
-        expect(strategy.request, isNotNull,
-            reason: 'status $code should fall through to network');
-      }
-    });
+        expect(strategy.request, isNotNull);
+        expect(strategy.cacheResponse, isNull);
+        // Client's If-None-Match must not be overwritten by the cached ETag.
+        expect(
+          strategy.request!.headers[ifNoneMatchHeader],
+          equals('client-etag'),
+        );
+      },
+    );
+
+    test(
+      'compute returns request from preconditions - ifModifiedSince && no-cache',
+      () async {
+        await testWithPreconditionRequest({
+          ifModifiedSinceHeader: HttpDate.format(DateTime.now()),
+          cacheControlHeader: 'no-cache',
+        });
+      },
+    );
+
+    test(
+      'compute returns request from preconditions - ifNoneMatch takes precedence on ifModifiedSince',
+      () async {
+        final request = await testWithPreconditionRequest({
+          ifNoneMatchHeader: '123',
+          ifModifiedSinceHeader: HttpDate.format(DateTime.now()),
+        });
+
+        expect(request.headers[ifNoneMatchHeader], isNotNull);
+        expect(request.headers[ifModifiedSinceHeader], isNull);
+      },
+    );
+
+    test(
+      'compute returns request - ifNoneMatch takes precedence on ifModifiedSince',
+      () async {
+        final request = await testWithPreconditionRequest(
+          {},
+          eTag: '123',
+          lastModified: DateTime.now().subtract(Duration(seconds: 10)),
+          date: DateTime.now().subtract(Duration(seconds: 5)),
+        );
+
+        expect(request.headers[ifNoneMatchHeader], isNotNull);
+        expect(request.headers[ifModifiedSinceHeader], isNull);
+      },
+    );
+
+    test(
+      'compute returns request - ifNoneMatch takes precedence on ifModifiedSince',
+      () async {
+        final lastModified = DateTime.now().subtract(Duration(seconds: 10));
+
+        final request = await testWithPreconditionRequest(
+          {},
+          lastModified: lastModified,
+          date: DateTime.now().subtract(Duration(seconds: 5)),
+        );
+
+        expect(request.headers[ifNoneMatchHeader], isNull);
+        expect(request.headers[ifModifiedSinceHeader], isNotNull);
+      },
+    );
+
+    test(
+      'compute does not cache responses with non-allowed status codes',
+      () async {
+        Future<CacheStrategy> computeStrategy(int statusCode) {
+          final request = MockRequest(url: Uri.parse('https://ok.org'));
+          final response = MockResponse(
+            statusCode: statusCode,
+            eTag: 'abc',
+            headers: {
+              etagHeader: ['abc'],
+            },
+          );
+          return CacheStrategyFactory(
+            request: request,
+            cacheOptions: cacheOptions,
+            response: response,
+          ).compute(
+            cacheResponseBuilder: () async =>
+                cacheResponsefrom(cacheOptions, request, response),
+          );
+        }
+
+        for (final code in [400, 401, 403, 500, 502, 503]) {
+          final strategy = await computeStrategy(code);
+          expect(
+            strategy.cacheResponse,
+            isNull,
+            reason: 'status $code should not be cached',
+          );
+          expect(
+            strategy.request,
+            isNotNull,
+            reason: 'status $code should fall through to network',
+          );
+        }
+      },
+    );
 
     test('compute caches responses with allowed status codes', () async {
       Future<CacheStrategy> computeStrategy(int statusCode) {
@@ -502,8 +581,11 @@ void main() {
 
       for (final code in [200, 203, 301, 404, 405, 501]) {
         final strategy = await computeStrategy(code);
-        expect(strategy.cacheResponse, isNotNull,
-            reason: 'status $code should be cached');
+        expect(
+          strategy.cacheResponse,
+          isNotNull,
+          reason: 'status $code should be cached',
+        );
       }
     });
   });

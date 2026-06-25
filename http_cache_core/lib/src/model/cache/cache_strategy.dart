@@ -184,6 +184,7 @@ class CacheStrategyFactory {
   /// the server from sending a response that the client has locally.
   bool _hasConditions(BaseRequest request, CacheControl rqCacheCtrl) {
     return rqCacheCtrl.noCache ||
+        request.headers[ifNoneMatchHeader] != null ||
         request.headers[ifModifiedSinceHeader] != null;
   }
 }
