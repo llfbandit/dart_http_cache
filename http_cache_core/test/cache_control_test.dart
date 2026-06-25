@@ -91,6 +91,33 @@ void main() {
     expect(cacheControl1, equals(cacheControl3));
   });
 
+  test('bare max-stale (no delta-seconds) means accept any stale age', () {
+    // With a value: parses normally.
+    expect(CacheControl.fromHeader(['max-stale=60']).maxStale, equals(60));
+
+    // Bare directive: must store a large positive value, not -1 (= "not set").
+    final bare = CacheControl.fromHeader(['max-stale']);
+    expect(bare.maxStale, greaterThan(0));
+
+    // Sanity-check: the value is large enough that multiplying by 1000 (ms)
+    // won't overflow and a stale response is always considered acceptable.
+    expect(
+      bare.maxStale * 1000,
+      greaterThan(Duration(days: 365).inMilliseconds),
+    );
+  });
+
+  test('fromHeader tolerates non-token characters (e.g. CDN extensions)', () {
+    // A lone non-token directive must not throw and is silently skipped.
+    expect(() => CacheControl.fromHeader(['{cdn-extension}']), returnsNormally);
+    expect(CacheControl.fromHeader(['{cdn-extension}']), equals(CacheControl()));
+
+    // Valid directives before the bad token must be preserved.
+    final cc = CacheControl.fromHeader(['no-cache, {cdn-extension}, max-age=60']);
+    expect(cc.noCache, isTrue);
+    expect(cc.maxAge, equals(60));
+  });
+
   test('fromHeader tolerates whitespace-only and trailing-comma values', () {
     // Whitespace-only header value must not throw.
     expect(() => CacheControl.fromHeader([' ']), returnsNormally);

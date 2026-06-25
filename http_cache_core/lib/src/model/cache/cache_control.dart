@@ -92,26 +92,32 @@ class CacheControl {
     ) {
       scanner.scan(whitespace);
       if (scanner.isDone) return;
-      scanner.expect(token);
 
-      final attribute = scanner.lastMatch![0]!;
+      try {
+        scanner.expect(token);
 
-      if (_knownAttributes.hasMatch(attribute)) {
-        if (scanner.scan('=')) {
-          scanner.expect(token);
-          parameters[attribute] = scanner.lastMatch![0]!;
+        final attribute = scanner.lastMatch![0]!;
+
+        if (_knownAttributes.hasMatch(attribute)) {
+          if (scanner.scan('=')) {
+            scanner.expect(token);
+            parameters[attribute] = scanner.lastMatch![0]!;
+          } else {
+            parameters[attribute] = attribute;
+          }
         } else {
-          parameters[attribute] = attribute;
+          if (scanner.scan('=')) {
+            scanner.expect(token);
+            other.add('$attribute=${scanner.lastMatch![0]!}');
+          } else {
+            other.add(attribute);
+          }
         }
-      } else {
-        if (scanner.scan('=')) {
-          scanner.expect(token);
-          other.add('$attribute=${scanner.lastMatch![0]!}');
-        } else {
-          other.add(attribute);
-        }
+        scanner.scan(whitespace);
+      } on FormatException {
+        // Non-token character (e.g. '{', '}') — skip this directive.
+        scanner.scan(RegExp(r'[^,]*'));
       }
-      scanner.scan(whitespace);
     }
 
     headerValues ??= [];
