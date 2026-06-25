@@ -91,6 +91,7 @@ class CacheControl {
       List<String> other,
     ) {
       scanner.scan(whitespace);
+      if (scanner.isDone) return;
       scanner.expect(token);
 
       final attribute = scanner.lastMatch![0]!;

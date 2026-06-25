@@ -91,6 +91,19 @@ void main() {
     expect(cacheControl1, equals(cacheControl3));
   });
 
+  test('fromHeader tolerates whitespace-only and trailing-comma values', () {
+    // Whitespace-only header value must not throw.
+    expect(() => CacheControl.fromHeader([' ']), returnsNormally);
+    expect(CacheControl.fromHeader([' ']), equals(CacheControl()));
+
+    // Trailing comma after valid directive must not throw.
+    expect(() => CacheControl.fromHeader(['no-cache, ']), returnsNormally);
+    expect(
+      CacheControl.fromHeader(['no-cache, ']),
+      equals(CacheControl(noCache: true)),
+    );
+  });
+
   test('CacheControl.fromString', () {
     final cacheControl1 = CacheControl(
       maxAge: 1,
@@ -102,15 +115,17 @@ void main() {
       mustRevalidate: true,
     );
 
-    final cacheControl2 = CacheControl.fromString([
-      'max-age=1',
-      'no-store',
-      'no-cache="set-cookie"', // no-cache is detected but set-cookie is lost
-      'public',
-      'max-stale=2',
-      'min-fresh=3',
-      'must-revalidate',
-    ].join(', '));
+    final cacheControl2 = CacheControl.fromString(
+      [
+        'max-age=1',
+        'no-store',
+        'no-cache="set-cookie"', // no-cache is detected but set-cookie is lost
+        'public',
+        'max-stale=2',
+        'min-fresh=3',
+        'must-revalidate',
+      ].join(', '),
+    );
 
     expect(cacheControl1, equals(cacheControl2));
 
