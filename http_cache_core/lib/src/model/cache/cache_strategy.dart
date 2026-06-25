@@ -174,7 +174,7 @@ class CacheStrategyFactory {
     var result = response.headers[etagHeader] != null;
     result |= response.headers[lastModifiedHeader] != null;
     result |= response.headers[expiresHeader] != null;
-    result |= respCacheCtrl.maxAge > 0;
+    result |= respCacheCtrl.maxAge > -1;
 
     return result;
   }
