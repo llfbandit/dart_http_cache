@@ -18,9 +18,14 @@ extension _CacheClientUtils on CacheClient {
   String _getCacheKey(HttpBaseRequest request) {
     final innerRequest = request.inner;
 
+    // Strip validation headers that CacheStrategyFactory injects before
+    // forwarding, so the lookup key and the save key stay stable.
+    final headers = Map<String, String>.from(innerRequest.headers)
+      ..removeWhere((key, _) => conditionalRequestHeaders.contains(key));
+
     return request.options.keyBuilder(
       url: innerRequest.url,
-      headers: innerRequest.headers,
+      headers: headers,
       body: innerRequest is http.Request ? innerRequest.body : null,
     );
   }
@@ -66,17 +71,29 @@ extension _CacheClientUtils on CacheClient {
     CacheResponse cacheResponse,
     CacheOptions cacheOptions,
   ) async {
-    // Add or update maxStale
     final maxStaleUpdate = cacheOptions.maxStale;
     if (maxStaleUpdate != null) {
-      cacheResponse = cacheResponse.copyWith(
-        maxStale: DateTime.now().toUtc().add(maxStaleUpdate),
-      );
+      final now = DateTime.now().toUtc();
+      final newMaxStale = now.add(maxStaleUpdate);
 
-      // Store response to cache store
-      await _getCacheStore(cacheOptions).set(
-        await cacheResponse.writeContent(cacheOptions),
+      // Skip the store write while the persisted window is still more than half
+      // away; still write when it's missing, near expiry, or shrinking.
+      final halfWindow = Duration(
+        microseconds: maxStaleUpdate.inMicroseconds ~/ 2,
       );
+      final existingMaxStale = cacheResponse.maxStale;
+      final needsWrite =
+          existingMaxStale == null ||
+          existingMaxStale.isBefore(now.add(halfWindow)) ||
+          newMaxStale.isBefore(existingMaxStale);
+
+      cacheResponse = cacheResponse.copyWith(maxStale: newMaxStale);
+
+      if (needsWrite) {
+        await _getCacheStore(
+          cacheOptions,
+        ).set(await cacheResponse.writeContent(cacheOptions));
+      }
     }
 
     return cacheResponse;
@@ -87,17 +104,18 @@ extension _CacheClientUtils on CacheClient {
     http.Response response,
     HttpBaseRequest request,
   ) async {
-    final strategy = await CacheStrategyFactory(
-      request: request,
-      response: HttpBaseResponse(response),
-      cacheOptions: request.options,
-    ).compute(
-      cacheResponseBuilder: () => response.toCacheResponse(
-        key: _getCacheKey(request),
-        options: request.options,
-        requestDate: request.requestDate,
-      ),
-    );
+    final strategy =
+        await CacheStrategyFactory(
+          request: request,
+          response: HttpBaseResponse(response),
+          cacheOptions: request.options,
+        ).compute(
+          cacheResponseBuilder: () => response.toCacheResponse(
+            key: _getCacheKey(request),
+            options: request.options,
+            requestDate: request.requestDate,
+          ),
+        );
 
     final cacheResp = strategy.cacheResponse;
     if (cacheResp != null) {

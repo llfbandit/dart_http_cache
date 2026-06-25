@@ -18,17 +18,16 @@ class CacheClient extends http.BaseClient {
   final http.Client _inner;
 
   CacheClient(this._inner, {required CacheOptions options})
-      : assert(options.store != null),
-        _options = options,
-        _store = options.store!;
+    : assert(options.store != null),
+      _options = options,
+      _store = options.store!;
 
   @override
   Future<http.Response> get(
     Uri url, {
     Map<String, String>? headers,
     CacheOptions? options,
-  }) =>
-      _onRequest(_getMethod, url, headers, _getCacheOptions(options));
+  }) => _onRequest(_getMethod, url, headers, _getCacheOptions(options));
 
   @override
   Future<http.Response> post(
@@ -37,9 +36,14 @@ class CacheClient extends http.BaseClient {
     Object? body,
     Encoding? encoding,
     CacheOptions? options,
-  }) =>
-      _onRequest(
-          _postMethod, url, headers, _getCacheOptions(options), body, encoding);
+  }) => _onRequest(
+    _postMethod,
+    url,
+    headers,
+    _getCacheOptions(options),
+    body,
+    encoding,
+  );
 
   @override
   Future<String> read(
@@ -47,8 +51,11 @@ class CacheClient extends http.BaseClient {
     Map<String, String>? headers,
     CacheOptions? options,
   }) async {
-    final response =
-        await get(url, headers: headers, options: _getCacheOptions(options));
+    final response = await get(
+      url,
+      headers: headers,
+      options: _getCacheOptions(options),
+    );
     _checkResponseSuccess(url, response);
     return response.body;
   }
@@ -59,8 +66,11 @@ class CacheClient extends http.BaseClient {
     Map<String, String>? headers,
     CacheOptions? options,
   }) async {
-    final response =
-        await get(url, headers: headers, options: _getCacheOptions(options));
+    final response = await get(
+      url,
+      headers: headers,
+      options: _getCacheOptions(options),
+    );
     _checkResponseSuccess(url, response);
     return response.bodyBytes;
   }
@@ -100,14 +110,15 @@ class CacheClient extends http.BaseClient {
 
   /// Sends a non-streaming [Request] and returns a non-streaming [Response].
   Future<http.Response> _sendUnstreamedRequest(HttpBaseRequest request) async {
+    final http.Response response;
     try {
-      final response = await http.Response.fromStream(
-        await send(request.inner),
-      );
-      return _onResponse(response, request);
-    } on http.ClientException catch (ex) {
+      response = await http.Response.fromStream(await send(request.inner));
+    } catch (ex) {
+      // Any transport error (ClientException, SocketException, timeout, …)
+      // may fall back to cache when allowed.
       return _onError(ex, request);
     }
+    return _onResponse(response, request);
   }
 
   /// Throws an error if [response] is not successful.

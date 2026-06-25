@@ -202,6 +202,38 @@ Future<http.Response> getException(
   return client.get(url, options: options, headers: headers);
 }
 
+Future<http.Response> getNonClientError(
+  CacheOptions options, {
+  Map<String, String>? headers,
+}) {
+  final url = Uri.http('ok.org', '/ok');
+
+  var client = CacheClient(
+    MockClient(
+      (request) async {
+        if (headers != null && headers.containsKey('x-err')) {
+          // Not a http.ClientException — e.g. a raw socket/timeout error.
+          throw StateError('non-client error');
+        }
+
+        return http.Response(
+          jsonEncode({'path': request.url.path}),
+          200,
+          headers: {
+            contentTypeHeader: jsonContentType,
+            etagHeader: '1234',
+            dateHeader: HttpDate.format(DateTime.now()),
+          },
+          request: request,
+        );
+      },
+    ),
+    options: options,
+  );
+
+  return client.get(url, options: options, headers: headers);
+}
+
 Future<http.Response> getOkNoDirective(CacheOptions options) {
   final url = Uri.http('ok.org', '/ok-nodirective');
 
