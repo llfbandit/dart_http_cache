@@ -124,7 +124,7 @@ class _LruMap {
   final int maxEntrySize;
 
   _LruMap({required this.maxSize, required this.maxEntrySize}) {
-    assert(maxEntrySize != maxSize);
+    assert(maxEntrySize < maxSize);
     assert(maxEntrySize * 5 <= maxSize);
   }
 
@@ -176,6 +176,9 @@ class _LruMap {
       _head = entry.previous;
       _head?.next = null;
     }
+
+    entry.previous?.next = entry.next;
+    entry.next?.previous = entry.previous;
 
     return entry.value;
   }
