@@ -261,11 +261,11 @@ class CacheResponse {
   @override
   int get hashCode {
     return cacheControl.hashCode ^
-        content.hashCode ^
+        Object.hashAll(content ?? const []) ^
         date.hashCode ^
         eTag.hashCode ^
         expires.hashCode ^
-        headers.hashCode ^
+        Object.hashAll(headers ?? const []) ^
         key.hashCode ^
         lastModified.hashCode ^
         maxStale.hashCode ^
