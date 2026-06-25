@@ -130,12 +130,15 @@ class CacheControl {
     for (var value in headerValues) {
       if (value.isNotEmpty) {
         final scanner = StringScanner(value);
-        parseHeaderValue(scanner, parameters, other);
-
-        while (scanner.scan(',')) {
+        while (!scanner.isDone) {
           parseHeaderValue(scanner, parameters, other);
+
+          // Consume the separator, so malformed input never throw.
+          if (!scanner.scan(',')) {
+            scanner.scan(RegExp(r'[^,]*'));
+            scanner.scan(',');
+          }
         }
-        scanner.expectDone();
       }
     }
 
