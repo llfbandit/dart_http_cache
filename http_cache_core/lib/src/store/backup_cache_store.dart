@@ -75,7 +75,9 @@ class BackupCacheStore extends CacheStore {
     responses.addAll(
         await secondary.getFromPath(pathPattern, queryParams: queryParams));
 
-    return responses.toSet().toList(growable: false);
+    // Deduplicate by key; primary's entry wins (added first).
+    final seen = <String>{};
+    return responses.where((r) => seen.add(r.key)).toList(growable: false);
   }
 
   @override
