@@ -3,7 +3,7 @@ description: Dio HTTP cache interceptor with multiple stores respecting HTTP dir
 repository: https://github.com/llfbandit/dart_http_cache
 issue_tracker: https://github.com/llfbandit/dart_http_cache/issues
 
-version: 4.0.6
+version: 4.0.7
 
 resolution: workspace
 
@@ -13,7 +13,7 @@ environment:
 dependencies:
   # https://pub.dev/packages/dio
   dio: ^5.2.0+1
-  http_cache_core: ^1.1.3
+  http_cache_core: ^1.1.4
 
 dev_dependencies:
   # https://pub.dev/packages/lints

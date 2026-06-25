@@ -1,3 +1,13 @@
+## 4.0.7
+- perf: skip store write in _updateCacheResponse when maxStale is still half-window fresh
+- fix: remove DioBaseRequest constructor mutation of RequestOptions.headers
+- fix: make CacheResponse.content and headers final to prevent stale _cachedHeaders
+- fix: strip if-none-match/if-modified-since from headers before invoking keyBuilder
+- fix: guard against null requestDate when DioCacheInterceptor.onRequest is bypassed
+- fix: skip storing a 304 response when no cached entry exists to update
+- fix: wrap interceptor handlers in try/catch to prevent hangs on store exceptions
+- refactor: remove dead else branch in onRequest conditional request dispatch
+
 ## 4.0.6
 - fix: Age header refresh on 304 revalidation
 - chore: Min SDK is now 3.6.0.
