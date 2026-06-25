@@ -3,7 +3,7 @@ import 'package:http_cache_core/src/model/utils/contants.dart';
 import 'package:string_scanner/string_scanner.dart';
 
 final _knownAttributes = RegExp(
-  r'max-age|max-stale|min-fresh|must-revalidate|public|private|no-cache|no-store',
+  r'^(max-age|max-stale|min-fresh|must-revalidate|public|private|no-cache|no-store)$',
 );
 
 const _maxAgeHeader = 'max-age';
