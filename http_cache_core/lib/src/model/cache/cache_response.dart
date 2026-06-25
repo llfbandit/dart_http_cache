@@ -170,10 +170,14 @@ class CacheResponse {
       // should be defaulted to 10% of the document's age
       // at the time it was served.
       // Default expiration dates aren't used for URIs containing a query.
-      final delta = (date ?? requestDate)
-          .difference(HttpDate.parse(lastModified!))
-          .inMilliseconds;
-      return ((delta > 0) ? delta / 10 : 0).round();
+      try {
+        final delta = (date ?? requestDate)
+            .difference(HttpDate.parse(lastModified!))
+            .inMilliseconds;
+        return ((delta > 0) ? delta / 10 : 0).round();
+      } catch (_) {
+        // Malformed Last-Modified header — skip heuristic freshness.
+      }
     }
 
     return 0;
