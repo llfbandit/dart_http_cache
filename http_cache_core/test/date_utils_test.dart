@@ -14,9 +14,10 @@ void main() {
       );
     });
 
-    test('returns null when invalid (malformed header treated as absent)', () {
-      expect(getExpiresHeaderValue('Thu, 1 Jan 1972'), isNull);
-      expect(getExpiresHeaderValue('not-a-date'), isNull);
+    test('malformed header treated as already expired (RFC 7234 §5.3)', () {
+      final epochPast = DateTime.fromMicrosecondsSinceEpoch(0, isUtc: true);
+      expect(getExpiresHeaderValue('Thu, 1 Jan 1972'), equals(epochPast));
+      expect(getExpiresHeaderValue('not-a-date'), equals(epochPast));
     });
   });
 
