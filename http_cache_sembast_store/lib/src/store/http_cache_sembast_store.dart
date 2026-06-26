@@ -19,10 +19,8 @@ class SembastCacheStore extends CacheStore {
   /// Sembast ref instance for [CacheResponseBox]
   final StoreRef<String, Map<String, dynamic>> _store;
 
-  SembastCacheStore({
-    required this.storePath,
-    this.cacheStore = 'cacheStore',
-  }) : _store = stringMapStoreFactory.store(cacheStore) {
+  SembastCacheStore({required this.storePath, this.cacheStore = 'cacheStore'})
+    : _store = stringMapStoreFactory.store(cacheStore) {
     clean(staleOnly: true);
   }
 
@@ -32,10 +30,13 @@ class SembastCacheStore extends CacheStore {
     bool staleOnly = false,
   }) async {
     final database = await _openDatabase();
-    final query = Finder(filter: Filter.custom((snapshot) {
-      var value = snapshot['priority'] as String;
-      return CachePriority.values.byName(value).index <= priorityOrBelow.index;
-    }));
+    final query = Finder(
+      filter: Filter.custom((snapshot) {
+        var value = snapshot['priority'] as String;
+        return CachePriority.values.byName(value).index <=
+            priorityOrBelow.index;
+      }),
+    );
 
     final results = await _store.find(database, finder: query);
 
@@ -149,9 +150,7 @@ class SembastCacheStore extends CacheStore {
   }
 
   Future<Database> _openDatabase() async {
-    _database ??= await dbFactory.openDatabase(
-      '$storePath/$cacheStore',
-    );
+    _database ??= await dbFactory.openDatabase('$storePath/$cacheStore');
     return Future.value(_database);
   }
 }
@@ -179,15 +178,17 @@ extension CacheResponseExt on CacheResponse {
   static CacheResponse fromJson(Map<String, dynamic> instance) {
     return CacheResponse(
       key: instance['key'],
-      content:
-          instance['content'] != null ? utf8.encode(instance['content']) : null,
+      content: instance['content'] != null
+          ? utf8.encode(instance['content'])
+          : null,
       date: instance['date'] != null ? DateTime.parse(instance['date']) : null,
       eTag: instance['eTag'],
       expires: instance['expires'] != null
           ? DateTime.parse(instance['expires'])
           : null,
-      headers:
-          instance['headers'] != null ? utf8.encode(instance['headers']) : null,
+      headers: instance['headers'] != null
+          ? utf8.encode(instance['headers'])
+          : null,
       lastModified: instance['lastModified'],
       maxStale: instance['maxStale'] != null
           ? DateTime.parse(instance['maxStale'])
@@ -224,8 +225,8 @@ extension CacheControlExt on CacheControl {
       noStore: instance['noStore'] ?? false,
       other: instance['other'] != null
           ? (json.decode(instance['other']) as List)
-              .map<String>((e) => e)
-              .toList()
+                .map<String>((e) => e)
+                .toList()
           : <String>[],
       maxStale: instance['maxStale'] ?? -1,
       minFresh: instance['minFresh'] ?? -1,

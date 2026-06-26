@@ -46,3 +46,8 @@ melos:
       hooks:
         # Runs "flutter clean" in all Flutter packages (`--flutter`) with concurrency
         post: melos exec --flutter -c 1 -- "flutter clean"
+    
+    scripts:
+    format:
+      description: Format Dart code.
+      run: dart format .

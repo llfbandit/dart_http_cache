@@ -8,9 +8,7 @@ void main() {
   late SembastCacheStore store;
 
   setUpAll(() async {
-    store = SembastCacheStore(
-      storePath: '${Directory.current.path}/test/data',
-    );
+    store = SembastCacheStore(storePath: '${Directory.current.path}/test/data');
   });
 
   setUp(() async {

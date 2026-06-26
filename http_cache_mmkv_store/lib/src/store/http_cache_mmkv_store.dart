@@ -14,9 +14,8 @@ class MMKVCacheStore extends CacheStore {
   /// Parameters:
   /// - [cryptKey]: Optional encryption key. If provided, the cache data will be
   ///   encrypted using this key.
-  MMKVCacheStore({
-    String? cryptKey,
-  }) : _mmkv = MMKV.defaultMMKV(cryptKey: cryptKey);
+  MMKVCacheStore({String? cryptKey})
+    : _mmkv = MMKV.defaultMMKV(cryptKey: cryptKey);
 
   /// Useful for testing purposes.
   /// Allows injecting a mock MMKV instance for testing and dependency injection.
@@ -61,13 +60,12 @@ class MMKVCacheStore extends CacheStore {
     String? groupDir,
     MMKVLogLevel logLevel = MMKVLogLevel.Info,
     MMKVHandler? handler,
-  }) =>
-      MMKV.initialize(
-        groupDir: groupDir,
-        rootDir: rootDir,
-        logLevel: logLevel,
-        handler: handler,
-      );
+  }) => MMKV.initialize(
+    groupDir: groupDir,
+    rootDir: rootDir,
+    logLevel: logLevel,
+    handler: handler,
+  );
 
   @override
   Future<void> clean({
@@ -151,14 +149,17 @@ class MMKVCacheStore extends CacheStore {
           final bytes = _mmkv.decodeBytes(key);
           if (bytes == null) return null;
 
-          final response =
-              CacheResponseAdaptor.cacheResponseFromMMBuffer(bytes);
+          final response = CacheResponseAdaptor.cacheResponseFromMMBuffer(
+            bytes,
+          );
           bytes.destroy();
           return response;
         })
         .whereType<CacheResponse>()
-        .where((response) =>
-            pathExists(response.url, pathPattern, queryParams: queryParams))
+        .where(
+          (response) =>
+              pathExists(response.url, pathPattern, queryParams: queryParams),
+        )
         .toList();
   }
 

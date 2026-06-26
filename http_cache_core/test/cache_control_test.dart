@@ -118,10 +118,15 @@ void main() {
   test('fromHeader tolerates non-token characters (e.g. CDN extensions)', () {
     // A lone non-token directive must not throw and is silently skipped.
     expect(() => CacheControl.fromHeader(['{cdn-extension}']), returnsNormally);
-    expect(CacheControl.fromHeader(['{cdn-extension}']), equals(CacheControl()));
+    expect(
+      CacheControl.fromHeader(['{cdn-extension}']),
+      equals(CacheControl()),
+    );
 
     // Valid directives before the bad token must be preserved.
-    final cc = CacheControl.fromHeader(['no-cache, {cdn-extension}, max-age=60']);
+    final cc = CacheControl.fromHeader([
+      'no-cache, {cdn-extension}, max-age=60',
+    ]);
     expect(cc.noCache, isTrue);
     expect(cc.maxAge, equals(60));
   });

@@ -55,9 +55,11 @@ Future<void> addItem(CacheStore store) async {
 }
 
 Future<void> getItem(CacheStore store) async {
-  final headers = utf8.encode(jsonEncode({
-    contentTypeHeader: [jsonContentType]
-  }));
+  final headers = utf8.encode(
+    jsonEncode({
+      contentTypeHeader: [jsonContentType],
+    }),
+  );
   final cacheControl = CacheControl(maxAge: 10, privacy: 'public');
   final expires = DateTime.now();
   final lastModified = HttpDate.format(DateTime.now());
@@ -84,8 +86,10 @@ Future<void> getItem(CacheStore store) async {
   expect(resp?.priority, CachePriority.high);
   expect(resp?.cacheControl, equals(cacheControl));
   expect(resp?.statusCode, equals(200));
-  expect(resp!.expires!.millisecondsSinceEpoch ~/ 1000,
-      equals(expires.millisecondsSinceEpoch ~/ 1000));
+  expect(
+    resp!.expires!.millisecondsSinceEpoch ~/ 1000,
+    equals(expires.millisecondsSinceEpoch ~/ 1000),
+  );
 }
 
 Future<void> deleteItem(CacheStore store) async {
@@ -141,8 +145,9 @@ Future<void> expires(CacheStore store) async {
   expect(
     resp!.expires!.subtract(
       Duration(
-          milliseconds: resp.expires!.millisecond,
-          microseconds: resp.expires!.microsecond),
+        milliseconds: resp.expires!.millisecond,
+        microseconds: resp.expires!.microsecond,
+      ),
     ),
     equals(
       now.subtract(
@@ -168,29 +173,25 @@ Future<void> concurrentAccess(CacheStore store) async {
 
   for (var i = 1; i <= max; i++) {
     final key = i % 3 == 0 ? 'bar' : 'foo';
-    addFooResponse(store, key: key, lastModified: lastModified).then(
-      (value) {
-        store.get(key).then(
-          (resp) {
-            if (i % 3 == 0) {
-              store.exists(key).then((value) {
-                if (i == max) completer.complete();
-              });
-            } else if (i % 4 == 0) {
-              store.clean().then((value) {
-                if (i == max) completer.complete();
-              });
-            } else if (i % 5 == 0) {
-              store.delete(key).then((value) {
-                if (i == max) completer.complete();
-              });
-            } else {
-              if (i == max) completer.complete();
-            }
-          },
-        );
-      },
-    );
+    addFooResponse(store, key: key, lastModified: lastModified).then((value) {
+      store.get(key).then((resp) {
+        if (i % 3 == 0) {
+          store.exists(key).then((value) {
+            if (i == max) completer.complete();
+          });
+        } else if (i % 4 == 0) {
+          store.clean().then((value) {
+            if (i == max) completer.complete();
+          });
+        } else if (i % 5 == 0) {
+          store.delete(key).then((value) {
+            if (i == max) completer.complete();
+          });
+        } else {
+          if (i == max) completer.complete();
+        }
+      });
+    });
   }
 
   await completer.future;
@@ -204,10 +205,7 @@ void pathExists(CacheStore store) {
   // Match with null query params (matches all query params)
   expect(
     store.pathExists(
-      Uri(
-        path: '/foo',
-        queryParameters: {'bar': 'foobar'},
-      ).toString(),
+      Uri(path: '/foo', queryParameters: {'bar': 'foobar'}).toString(),
       RegExp('/foo'),
       queryParams: null,
     ),
@@ -217,10 +215,7 @@ void pathExists(CacheStore store) {
   // Match with null value query param (matches key with any value)
   expect(
     store.pathExists(
-      Uri(
-        path: '/foo',
-        queryParameters: {'bar': 'foobar'},
-      ).toString(),
+      Uri(path: '/foo', queryParameters: {'bar': 'foobar'}).toString(),
       RegExp('/foo'),
       queryParams: {'bar': null},
     ),
@@ -230,10 +225,7 @@ void pathExists(CacheStore store) {
   // Match with exact query params
   expect(
     store.pathExists(
-      Uri(
-        path: '/foo',
-        queryParameters: {'bar': 'foobar'},
-      ).toString(),
+      Uri(path: '/foo', queryParameters: {'bar': 'foobar'}).toString(),
       RegExp('/foo'),
       queryParams: {'bar': 'foobar'},
     ),
@@ -243,10 +235,7 @@ void pathExists(CacheStore store) {
   // No match on different query param value
   expect(
     store.pathExists(
-      Uri(
-        path: '/foo',
-        queryParameters: {'bar': 'foobar'},
-      ).toString(),
+      Uri(path: '/foo', queryParameters: {'bar': 'foobar'}).toString(),
       RegExp('/foo'),
       queryParams: {'bar': 'baz'},
     ),
@@ -258,16 +247,10 @@ void pathExists(CacheStore store) {
     store.pathExists(
       Uri(
         path: '/foo',
-        queryParameters: {
-          'bar': 'foo',
-          'qux': 'bar',
-        },
+        queryParameters: {'bar': 'foo', 'qux': 'bar'},
       ).toString(),
       RegExp('/foo'),
-      queryParams: {
-        'bar': 'foo',
-        'qux': 'foo',
-      },
+      queryParams: {'bar': 'foo', 'qux': 'foo'},
     ),
     isFalse,
   );

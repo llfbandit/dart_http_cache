@@ -36,11 +36,7 @@ Future<http.Response> post(
 
   var client = CacheClient(
     MockClient(
-      (request) async => http.Response(
-        request.body,
-        200,
-        request: request,
-      ),
+      (request) async => http.Response(request.body, 200, request: request),
     ),
     options: options,
   );
@@ -54,25 +50,20 @@ Future<http.Response> post(
   );
 }
 
-Future<String> read(
-  CacheOptions options, {
-  Map<String, String>? headers,
-}) {
+Future<String> read(CacheOptions options, {Map<String, String>? headers}) {
   final url = Uri.http('ok.org', '/read');
 
   var client = CacheClient(
-    MockClient(
-      (request) async {
-        final hasError = request.headers.containsKey('x-err');
+    MockClient((request) async {
+      final hasError = request.headers.containsKey('x-err');
 
-        return http.Response(
-          jsonEncode({'path': request.url.path}),
-          hasError ? 500 : 200,
-          request: request,
-          reasonPhrase: hasError ? 'Internal server error' : null,
-        );
-      },
-    ),
+      return http.Response(
+        jsonEncode({'path': request.url.path}),
+        hasError ? 500 : 200,
+        request: request,
+        reasonPhrase: hasError ? 'Internal server error' : null,
+      );
+    }),
     options: options,
   );
 

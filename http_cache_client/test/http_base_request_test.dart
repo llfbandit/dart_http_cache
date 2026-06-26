@@ -34,7 +34,7 @@ void main() {
     final inner = http.Request('GET', Uri.parse('https://ok.org'));
     inner.headers.addAll({
       'set-cookie':
-          'id=a3fWa; Max-Age=2592000; Expires=Wed, 21 Oct 2015 07:28:00 GMT'
+          'id=a3fWa; Max-Age=2592000; Expires=Wed, 21 Oct 2015 07:28:00 GMT',
     });
 
     final request = HttpBaseRequest(
@@ -46,20 +46,24 @@ void main() {
     final values = request.headers['set-cookie'];
     expect(values, isNotNull);
     expect(
-        values,
-        equals(
-            'id=a3fWa; Max-Age=2592000; Expires=Wed, 21 Oct 2015 07:28:00 GMT'));
+      values,
+      equals(
+        'id=a3fWa; Max-Age=2592000; Expires=Wed, 21 Oct 2015 07:28:00 GMT',
+      ),
+    );
     expect(
-        values,
-        equals(
-            'id=a3fWa; Max-Age=2592000; Expires=Wed, 21 Oct 2015 07:28:00 GMT'));
+      values,
+      equals(
+        'id=a3fWa; Max-Age=2592000; Expires=Wed, 21 Oct 2015 07:28:00 GMT',
+      ),
+    );
   });
 
   test('headerValuesAsList set-cookie', () {
     final inner = http.Request('GET', Uri.parse('https://ok.org'));
-    inner.headers.addAll(
-      {cacheControlHeader: 'no-cache, private,max-age=3600'},
-    );
+    inner.headers.addAll({
+      cacheControlHeader: 'no-cache, private,max-age=3600',
+    });
 
     final request = HttpBaseRequest(
       inner,
@@ -73,9 +77,9 @@ void main() {
 
   test('setHeader null value', () {
     final inner = http.Request('GET', Uri.parse('https://ok.org'));
-    inner.headers.addAll(
-      {cacheControlHeader: 'no-cache, private,max-age=3600'},
-    );
+    inner.headers.addAll({
+      cacheControlHeader: 'no-cache, private,max-age=3600',
+    });
 
     final request = HttpBaseRequest(
       inner,
@@ -93,9 +97,9 @@ void main() {
 
   test('setHeader assign value', () {
     final inner = http.Request('GET', Uri.parse('https://ok.org'));
-    inner.headers.addAll(
-      {cacheControlHeader: 'no-cache, private,max-age=3600'},
-    );
+    inner.headers.addAll({
+      cacheControlHeader: 'no-cache, private,max-age=3600',
+    });
 
     final request = HttpBaseRequest(
       inner,
@@ -116,11 +120,7 @@ void main() {
 
     final now = DateTime.now();
 
-    final request = HttpBaseRequest(
-      inner,
-      CacheOptions(store: null),
-      now,
-    );
+    final request = HttpBaseRequest(inner, CacheOptions(store: null), now);
 
     expect(request.requestDate, now);
   });

@@ -34,9 +34,14 @@ void main() {
     );
 
     expect(
-      HttpBaseResponse(http.Response('', 200,
+      HttpBaseResponse(
+        http.Response(
+          '',
+          200,
           request: rq,
-          headers: {'content-disposition': 'foo;bar,baz'})).isAttachment(),
+          headers: {'content-disposition': 'foo;bar,baz'},
+        ),
+      ).isAttachment(),
       isFalse,
     );
   });
@@ -45,9 +50,14 @@ void main() {
     final rq = http.Request('GET', Uri.parse('https://ok.org'));
 
     expect(
-      HttpBaseResponse(http.Response('', 200,
+      HttpBaseResponse(
+        http.Response(
+          '',
+          200,
           request: rq,
-          headers: {'content-disposition': 'foo;attachment'})).isAttachment(),
+          headers: {'content-disposition': 'foo;attachment'},
+        ),
+      ).isAttachment(),
       isTrue,
     );
   });

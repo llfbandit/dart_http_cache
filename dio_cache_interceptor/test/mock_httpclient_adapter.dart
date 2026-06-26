@@ -37,7 +37,7 @@ class MockHttpClientAdapter implements HttpClientAdapter {
             '{}',
             500,
             headers: {
-              Headers.contentTypeHeader: [Headers.jsonContentType]
+              Headers.contentTypeHeader: [Headers.jsonContentType],
             },
           );
         }
@@ -45,12 +45,12 @@ class MockHttpClientAdapter implements HttpClientAdapter {
         return ResponseBody.fromString(
           jsonEncode({'path': uri.path}),
           200,
-        headers: {
-          Headers.contentTypeHeader: [Headers.jsonContentType],
-          ageHeader: ['1'],
-          'etag': ['1234'],
-        },
-      );
+          headers: {
+            Headers.contentTypeHeader: [Headers.jsonContentType],
+            ageHeader: ['1'],
+            'etag': ['1234'],
+          },
+        );
       case '/ok-nodirective':
         return ResponseBody.fromString(
           jsonEncode({'path': uri.path}),
@@ -80,7 +80,7 @@ class MockHttpClientAdapter implements HttpClientAdapter {
             Headers.contentTypeHeader: [Headers.jsonContentType],
             'etag': ['1234'],
             'last-modified': [
-              HttpDate.format(DateTime.now().add(Duration(days: 1)))
+              HttpDate.format(DateTime.now().add(Duration(days: 1))),
             ],
           },
         );
@@ -90,7 +90,7 @@ class MockHttpClientAdapter implements HttpClientAdapter {
           200,
           headers: {
             Headers.contentLengthHeader: [
-              File('./README.md').lengthSync().toString()
+              File('./README.md').lengthSync().toString(),
             ],
             'etag': ['5678'],
           },
@@ -117,7 +117,7 @@ class MockHttpClientAdapter implements HttpClientAdapter {
               cacheControlHeader: ['public', 'max-age=0'],
               'date': ['Wed, 21 Oct 2000 07:28:00 GMT'],
               'expires': [
-                HttpDate.format(DateTime.now().add(Duration(days: 10)))
+                HttpDate.format(DateTime.now().add(Duration(days: 10))),
               ],
               'etag': ['9875'],
             },
@@ -145,7 +145,7 @@ class MockHttpClientAdapter implements HttpClientAdapter {
               Headers.contentTypeHeader: [Headers.jsonContentType],
               cacheControlHeader: ['no-store'],
               'expires': [
-                HttpDate.format(DateTime.now().add(Duration(days: 10)))
+                HttpDate.format(DateTime.now().add(Duration(days: 10))),
               ],
               'etag': ['9875'],
             },

@@ -17,10 +17,7 @@ class IsarCacheStore extends CacheStore {
   /// Initialize cache store by giving Isar a home directory.
   /// [directory] can be null only on web platform or if you already use Hive
   /// in your app.
-  IsarCacheStore(
-    this.directory, {
-    this.name = 'dio_cache',
-  }) {
+  IsarCacheStore(this.directory, {this.name = 'dio_cache'}) {
     clean(staleOnly: true);
   }
 
@@ -31,9 +28,10 @@ class IsarCacheStore extends CacheStore {
   }) async {
     final isar = await _openIsar();
 
-    var query = isar.caches
-        .filter()
-        .priorityLessThan(priorityOrBelow.index, include: true);
+    var query = isar.caches.filter().priorityLessThan(
+      priorityOrBelow.index,
+      include: true,
+    );
 
     if (staleOnly) {
       query = query.and().maxStaleLessThan(DateTime.now().toUtc());
@@ -149,8 +147,11 @@ class IsarCacheStore extends CacheStore {
     int offset = 0;
 
     do {
-      final results =
-          await isar.caches.where().offset(offset).limit(limit).findAll();
+      final results = await isar.caches
+          .where()
+          .offset(offset)
+          .limit(limit)
+          .findAll();
 
       for (final result in results) {
         if (pathExists(result.url, pathPattern, queryParams: queryParams)) {
@@ -164,11 +165,7 @@ class IsarCacheStore extends CacheStore {
 
   Future<Isar> _openIsar() async {
     if (_isar == null) {
-      _isar = await Isar.open(
-        [CacheSchema],
-        directory: directory,
-        name: name,
-      );
+      _isar = await Isar.open([CacheSchema], directory: directory, name: name);
 
       await clean(staleOnly: true);
     }
@@ -188,7 +185,8 @@ class IsarCacheStore extends CacheStore {
       lastModified: data.lastModified,
       maxStale: data.maxStale,
       priority: CachePriority.values[data.priority],
-      requestDate: data.requestDate ??
+      requestDate:
+          data.requestDate ??
           data.responseDate.subtract(const Duration(milliseconds: 150)),
       responseDate: data.responseDate,
       url: data.url,

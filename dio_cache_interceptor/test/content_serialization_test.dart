@@ -22,10 +22,14 @@ void main() {
       yield 'test'.codeUnits;
     }
 
-    expect(() async => await serializeContent(ResponseType.stream, content()),
-        throwsUnsupportedError);
-    expect(() async => await deserializeContent(ResponseType.stream, <int>[]),
-        throwsUnsupportedError);
+    expect(
+      () async => await serializeContent(ResponseType.stream, content()),
+      throwsUnsupportedError,
+    );
+    expect(
+      () async => await deserializeContent(ResponseType.stream, <int>[]),
+      throwsUnsupportedError,
+    );
   });
 
   test('Serialize plain', () async {
@@ -57,10 +61,7 @@ void main() {
   });
 
   test('Serialize null', () async {
-    final serializedContent = await serializeContent(
-      ResponseType.json,
-      null,
-    );
+    final serializedContent = await serializeContent(ResponseType.json, null);
     final deserializedContent = await deserializeContent(
       ResponseType.json,
       serializedContent,

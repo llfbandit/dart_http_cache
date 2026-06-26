@@ -22,22 +22,24 @@ void main() {
   ) {
     final now = DateTime.now();
 
-    return store.set(CacheResponse(
-      cacheControl: CacheControl(),
-      content: content,
-      date: now,
-      eTag: 'etag/$key',
-      expires: null,
-      headers: headers,
-      key: key,
-      lastModified: null,
-      maxStale: null,
-      priority: CachePriority.normal,
-      requestDate: now.subtract(const Duration(milliseconds: 50)),
-      responseDate: now,
-      url: 'https://foo.com',
-      statusCode: 200,
-    ));
+    return store.set(
+      CacheResponse(
+        cacheControl: CacheControl(),
+        content: content,
+        date: now,
+        eTag: 'etag/$key',
+        expires: null,
+        headers: headers,
+        key: key,
+        lastModified: null,
+        maxStale: null,
+        priority: CachePriority.normal,
+        requestDate: now.subtract(const Duration(milliseconds: 50)),
+        responseDate: now,
+        url: 'https://foo.com',
+        statusCode: 200,
+      ),
+    );
   }
 
   test('Exceeds maxSize', () async {

@@ -35,10 +35,7 @@ class _MyAppState extends State<MyApp> {
       hitCacheOnNetworkFailure: true, // for offline behaviour
     );
 
-    dio = Dio()
-      ..interceptors.add(
-        DioCacheInterceptor(options: cacheOptions),
-      );
+    dio = Dio()..interceptors.add(DioCacheInterceptor(options: cacheOptions));
 
     // or
 
@@ -89,15 +86,14 @@ class _MyAppState extends State<MyApp> {
             bottom: const TabBar(
               tabs: [
                 Tab(
-                    child: Text(
-                  'With server cache',
-                  textAlign: TextAlign.center,
-                )),
+                  child: Text('With server cache', textAlign: TextAlign.center),
+                ),
                 Tab(
-                    child: Text(
-                  'Without server cache',
-                  textAlign: TextAlign.center,
-                )),
+                  child: Text(
+                    'Without server cache',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
                 Tab(child: Text('Image')),
               ],
             ),

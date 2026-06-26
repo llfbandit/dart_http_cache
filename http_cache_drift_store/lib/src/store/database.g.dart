@@ -9,92 +9,134 @@ class DioCache extends Table with TableInfo<DioCache, DioCacheData> {
   final String? _alias;
   DioCache(this.attachedDatabase, [this._alias]);
   late final GeneratedColumn<String> cacheKey = GeneratedColumn<String>(
-      'cacheKey', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL PRIMARY KEY');
+    'cacheKey',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL PRIMARY KEY',
+  );
   late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
-      'date', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+    'date',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
   late final GeneratedColumn<String> cacheControl = GeneratedColumn<String>(
-      'cacheControl', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+    'cacheControl',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
   late final GeneratedColumn<Uint8List> content = GeneratedColumn<Uint8List>(
-      'content', aliasedName, true,
-      type: DriftSqlType.blob,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+    'content',
+    aliasedName,
+    true,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
   late final GeneratedColumn<String> eTag = GeneratedColumn<String>(
-      'eTag', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+    'eTag',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
   late final GeneratedColumn<DateTime> expires = GeneratedColumn<DateTime>(
-      'expires', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+    'expires',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
   late final GeneratedColumn<Uint8List> headers = GeneratedColumn<Uint8List>(
-      'headers', aliasedName, true,
-      type: DriftSqlType.blob,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+    'headers',
+    aliasedName,
+    true,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
   late final GeneratedColumn<String> lastModified = GeneratedColumn<String>(
-      'lastModified', aliasedName, true,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+    'lastModified',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
   late final GeneratedColumn<DateTime> maxStale = GeneratedColumn<DateTime>(
-      'maxStale', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+    'maxStale',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
   late final GeneratedColumn<int> priority = GeneratedColumn<int>(
-      'priority', aliasedName, false,
-      type: DriftSqlType.int,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
+    'priority',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
   late final GeneratedColumn<DateTime> requestDate = GeneratedColumn<DateTime>(
-      'requestDate', aliasedName, true,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+    'requestDate',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
   late final GeneratedColumn<DateTime> responseDate = GeneratedColumn<DateTime>(
-      'responseDate', aliasedName, false,
-      type: DriftSqlType.dateTime,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
+    'responseDate',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
   late final GeneratedColumn<String> url = GeneratedColumn<String>(
-      'url', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      $customConstraints: 'NOT NULL');
+    'url',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    $customConstraints: 'NOT NULL',
+  );
   late final GeneratedColumn<int> statusCode = GeneratedColumn<int>(
-      'statusCode', aliasedName, true,
-      type: DriftSqlType.int,
-      requiredDuringInsert: false,
-      $customConstraints: '');
+    'statusCode',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: '',
+  );
   @override
   List<GeneratedColumn> get $columns => [
-        cacheKey,
-        date,
-        cacheControl,
-        content,
-        eTag,
-        expires,
-        headers,
-        lastModified,
-        maxStale,
-        priority,
-        requestDate,
-        responseDate,
-        url,
-        statusCode
-      ];
+    cacheKey,
+    date,
+    cacheControl,
+    content,
+    eTag,
+    expires,
+    headers,
+    lastModified,
+    maxStale,
+    priority,
+    requestDate,
+    responseDate,
+    url,
+    statusCode,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -106,34 +148,62 @@ class DioCache extends Table with TableInfo<DioCache, DioCacheData> {
   DioCacheData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return DioCacheData(
-      cacheKey: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}cacheKey'])!,
-      date: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}date']),
-      cacheControl: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}cacheControl']),
-      content: attachedDatabase.typeMapping
-          .read(DriftSqlType.blob, data['${effectivePrefix}content']),
-      eTag: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}eTag']),
-      expires: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}expires']),
-      headers: attachedDatabase.typeMapping
-          .read(DriftSqlType.blob, data['${effectivePrefix}headers']),
-      lastModified: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}lastModified']),
-      maxStale: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}maxStale']),
-      priority: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}priority'])!,
-      requestDate: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}requestDate']),
-      responseDate: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}responseDate'])!,
-      url: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}url'])!,
-      statusCode: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}statusCode']),
+      cacheKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cacheKey'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date'],
+      ),
+      cacheControl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cacheControl'],
+      ),
+      content: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}content'],
+      ),
+      eTag: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}eTag'],
+      ),
+      expires: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}expires'],
+      ),
+      headers: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}headers'],
+      ),
+      lastModified: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}lastModified'],
+      ),
+      maxStale: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}maxStale'],
+      ),
+      priority: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}priority'],
+      )!,
+      requestDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}requestDate'],
+      ),
+      responseDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}responseDate'],
+      )!,
+      url: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}url'],
+      )!,
+      statusCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}statusCode'],
+      ),
     );
   }
 
@@ -161,21 +231,22 @@ class DioCacheData extends DataClass implements Insertable<DioCacheData> {
   final DateTime responseDate;
   final String url;
   final int? statusCode;
-  const DioCacheData(
-      {required this.cacheKey,
-      this.date,
-      this.cacheControl,
-      this.content,
-      this.eTag,
-      this.expires,
-      this.headers,
-      this.lastModified,
-      this.maxStale,
-      required this.priority,
-      this.requestDate,
-      required this.responseDate,
-      required this.url,
-      this.statusCode});
+  const DioCacheData({
+    required this.cacheKey,
+    this.date,
+    this.cacheControl,
+    this.content,
+    this.eTag,
+    this.expires,
+    this.headers,
+    this.lastModified,
+    this.maxStale,
+    required this.priority,
+    this.requestDate,
+    required this.responseDate,
+    required this.url,
+    this.statusCode,
+  });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -216,8 +287,10 @@ class DioCacheData extends DataClass implements Insertable<DioCacheData> {
     return map;
   }
 
-  factory DioCacheData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
+  factory DioCacheData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return DioCacheData(
       cacheKey: serializer.fromJson<String>(json['cacheKey']),
@@ -257,37 +330,37 @@ class DioCacheData extends DataClass implements Insertable<DioCacheData> {
     };
   }
 
-  DioCacheData copyWith(
-          {String? cacheKey,
-          DateTime? date,
-          String? cacheControl,
-          Uint8List? content,
-          String? eTag,
-          DateTime? expires,
-          Uint8List? headers,
-          String? lastModified,
-          DateTime? maxStale,
-          int? priority,
-          DateTime? requestDate,
-          DateTime? responseDate,
-          String? url,
-          int? statusCode}) =>
-      DioCacheData(
-        cacheKey: cacheKey ?? this.cacheKey,
-        date: date ?? this.date,
-        cacheControl: cacheControl ?? this.cacheControl,
-        content: content ?? this.content,
-        eTag: eTag ?? this.eTag,
-        expires: expires ?? this.expires,
-        headers: headers ?? this.headers,
-        lastModified: lastModified ?? this.lastModified,
-        maxStale: maxStale ?? this.maxStale,
-        priority: priority ?? this.priority,
-        requestDate: requestDate ?? this.requestDate,
-        responseDate: responseDate ?? this.responseDate,
-        url: url ?? this.url,
-        statusCode: statusCode ?? this.statusCode,
-      );
+  DioCacheData copyWith({
+    String? cacheKey,
+    DateTime? date,
+    String? cacheControl,
+    Uint8List? content,
+    String? eTag,
+    DateTime? expires,
+    Uint8List? headers,
+    String? lastModified,
+    DateTime? maxStale,
+    int? priority,
+    DateTime? requestDate,
+    DateTime? responseDate,
+    String? url,
+    int? statusCode,
+  }) => DioCacheData(
+    cacheKey: cacheKey ?? this.cacheKey,
+    date: date ?? this.date,
+    cacheControl: cacheControl ?? this.cacheControl,
+    content: content ?? this.content,
+    eTag: eTag ?? this.eTag,
+    expires: expires ?? this.expires,
+    headers: headers ?? this.headers,
+    lastModified: lastModified ?? this.lastModified,
+    maxStale: maxStale ?? this.maxStale,
+    priority: priority ?? this.priority,
+    requestDate: requestDate ?? this.requestDate,
+    responseDate: responseDate ?? this.responseDate,
+    url: url ?? this.url,
+    statusCode: statusCode ?? this.statusCode,
+  );
   DioCacheData copyWithCompanion(DioCacheCompanion data) {
     return DioCacheData(
       cacheKey: data.cacheKey.present ? data.cacheKey.value : this.cacheKey,
@@ -304,14 +377,16 @@ class DioCacheData extends DataClass implements Insertable<DioCacheData> {
           : this.lastModified,
       maxStale: data.maxStale.present ? data.maxStale.value : this.maxStale,
       priority: data.priority.present ? data.priority.value : this.priority,
-      requestDate:
-          data.requestDate.present ? data.requestDate.value : this.requestDate,
+      requestDate: data.requestDate.present
+          ? data.requestDate.value
+          : this.requestDate,
       responseDate: data.responseDate.present
           ? data.responseDate.value
           : this.responseDate,
       url: data.url.present ? data.url.value : this.url,
-      statusCode:
-          data.statusCode.present ? data.statusCode.value : this.statusCode,
+      statusCode: data.statusCode.present
+          ? data.statusCode.value
+          : this.statusCode,
     );
   }
 
@@ -338,20 +413,21 @@ class DioCacheData extends DataClass implements Insertable<DioCacheData> {
 
   @override
   int get hashCode => Object.hash(
-      cacheKey,
-      date,
-      cacheControl,
-      $driftBlobEquality.hash(content),
-      eTag,
-      expires,
-      $driftBlobEquality.hash(headers),
-      lastModified,
-      maxStale,
-      priority,
-      requestDate,
-      responseDate,
-      url,
-      statusCode);
+    cacheKey,
+    date,
+    cacheControl,
+    $driftBlobEquality.hash(content),
+    eTag,
+    expires,
+    $driftBlobEquality.hash(headers),
+    lastModified,
+    maxStale,
+    priority,
+    requestDate,
+    responseDate,
+    url,
+    statusCode,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -421,10 +497,10 @@ class DioCacheCompanion extends UpdateCompanion<DioCacheData> {
     required String url,
     this.statusCode = const Value.absent(),
     this.rowid = const Value.absent(),
-  })  : cacheKey = Value(cacheKey),
-        priority = Value(priority),
-        responseDate = Value(responseDate),
-        url = Value(url);
+  }) : cacheKey = Value(cacheKey),
+       priority = Value(priority),
+       responseDate = Value(responseDate),
+       url = Value(url);
   static Insertable<DioCacheData> custom({
     Expression<String>? cacheKey,
     Expression<DateTime>? date,
@@ -461,22 +537,23 @@ class DioCacheCompanion extends UpdateCompanion<DioCacheData> {
     });
   }
 
-  DioCacheCompanion copyWith(
-      {Value<String>? cacheKey,
-      Value<DateTime?>? date,
-      Value<String?>? cacheControl,
-      Value<Uint8List?>? content,
-      Value<String?>? eTag,
-      Value<DateTime?>? expires,
-      Value<Uint8List?>? headers,
-      Value<String?>? lastModified,
-      Value<DateTime?>? maxStale,
-      Value<int>? priority,
-      Value<DateTime?>? requestDate,
-      Value<DateTime>? responseDate,
-      Value<String>? url,
-      Value<int?>? statusCode,
-      Value<int>? rowid}) {
+  DioCacheCompanion copyWith({
+    Value<String>? cacheKey,
+    Value<DateTime?>? date,
+    Value<String?>? cacheControl,
+    Value<Uint8List?>? content,
+    Value<String?>? eTag,
+    Value<DateTime?>? expires,
+    Value<Uint8List?>? headers,
+    Value<String?>? lastModified,
+    Value<DateTime?>? maxStale,
+    Value<int>? priority,
+    Value<DateTime?>? requestDate,
+    Value<DateTime>? responseDate,
+    Value<String>? url,
+    Value<int?>? statusCode,
+    Value<int>? rowid,
+  }) {
     return DioCacheCompanion(
       cacheKey: cacheKey ?? this.cacheKey,
       date: date ?? this.date,

@@ -48,7 +48,8 @@ extension CacheResponseEncoder on CacheResponse {
     final fields = Unpacker(bytes).unpackList();
     return CacheResponse(
       cacheControl: CacheControlEncoder.cacheControlFromBytes(
-          fields[0].castToUnit8List()),
+        fields[0].castToUnit8List(),
+      ),
       content: (fields[1] as List?)?.cast<int>(),
       date: fields[2] != null ? DateTime.parse(fields[2] as String) : null,
       eTag: fields[3] as String?,
@@ -58,13 +59,15 @@ extension CacheResponseEncoder on CacheResponse {
       lastModified: fields[7] as String?,
       maxStale: fields[8] != null ? DateTime.parse(fields[8] as String) : null,
       priority: CachePriorityEncoder.cachePriorityFromBytes(
-          fields[9].castToUnit8List()),
+        fields[9].castToUnit8List(),
+      ),
       responseDate: DateTime.parse(fields[10] as String),
       url: fields[11] as String,
       requestDate: fields[12] != null
           ? DateTime.parse(fields[12] as String)
-          : DateTime.parse(fields[10] as String)
-              .subtract(const Duration(milliseconds: 150)),
+          : DateTime.parse(
+              fields[10] as String,
+            ).subtract(const Duration(milliseconds: 150)),
       statusCode: fields[13] as int,
     );
   }

@@ -14,10 +14,8 @@ class MemCacheStore extends CacheStore {
   /// To prevent making this store useless, be sure to
   /// respect the following lower-limit rule: maxEntrySize * 5 <= maxSize.
   ///
-  MemCacheStore({
-    int maxSize = 7340032,
-    int maxEntrySize = 512000,
-  }) : _cache = _LruMap(maxSize: maxSize, maxEntrySize: maxEntrySize);
+  MemCacheStore({int maxSize = 7340032, int maxEntrySize = 512000})
+    : _cache = _LruMap(maxSize: maxSize, maxEntrySize: maxEntrySize);
 
   @override
   Future<void> clean({
@@ -61,10 +59,7 @@ class MemCacheStore extends CacheStore {
     RegExp pathPattern, {
     Map<String, String?>? queryParams,
   }) async {
-    final responses = await getFromPath(
-      pathPattern,
-      queryParams: queryParams,
-    );
+    final responses = await getFromPath(pathPattern, queryParams: queryParams);
 
     for (final response in responses) {
       _cache.remove(response.key);

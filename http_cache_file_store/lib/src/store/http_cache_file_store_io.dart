@@ -53,10 +53,7 @@ class FileCacheStore extends CacheStore {
     RegExp pathPattern, {
     Map<String, String?>? queryParams,
   }) async {
-    final responses = await getFromPath(
-      pathPattern,
-      queryParams: queryParams,
-    );
+    final responses = await getFromPath(pathPattern, queryParams: queryParams);
 
     for (final response in responses) {
       await delete(response.key);
@@ -111,10 +108,7 @@ class FileCacheStore extends CacheStore {
   Future<void> set(CacheResponse response) async {
     return _synchronized(response.key, () async {
       final file = File(
-        path.join(
-          _directories[response.priority]!.path,
-          response.key,
-        ),
+        path.join(_directories[response.priority]!.path, response.key),
       );
 
       // Delete previous value in case of priority change
@@ -209,8 +203,9 @@ class FileCacheStore extends CacheStore {
 
       i += size;
       size = sizes[fieldIndex++];
-      final etag =
-          size != 0 ? utf8.decode(data.skip(i).take(size).toList()) : null;
+      final etag = size != 0
+          ? utf8.decode(data.skip(i).take(size).toList())
+          : null;
 
       i += size;
       size = sizes[fieldIndex++];
@@ -218,13 +213,15 @@ class FileCacheStore extends CacheStore {
 
       i += size;
       size = sizes[fieldIndex++];
-      final lastModified =
-          size != 0 ? utf8.decode(data.skip(i).take(size).toList()) : null;
+      final lastModified = size != 0
+          ? utf8.decode(data.skip(i).take(size).toList())
+          : null;
 
       i += size;
       size = sizes[fieldIndex++];
-      final maxStale =
-          size != 0 ? utf8.decode(data.skip(i).take(size).toList()) : null;
+      final maxStale = size != 0
+          ? utf8.decode(data.skip(i).take(size).toList())
+          : null;
 
       i += size;
       size = sizes[fieldIndex++];
@@ -232,18 +229,21 @@ class FileCacheStore extends CacheStore {
 
       i += size;
       size = sizes[fieldIndex++];
-      final cacheControl =
-          size != 0 ? utf8.decode(data.skip(i).take(size).toList()) : null;
+      final cacheControl = size != 0
+          ? utf8.decode(data.skip(i).take(size).toList())
+          : null;
 
       i += size;
       size = sizes[fieldIndex++];
-      final date =
-          size != 0 ? utf8.decode(data.skip(i).take(size).toList()) : null;
+      final date = size != 0
+          ? utf8.decode(data.skip(i).take(size).toList())
+          : null;
 
       i += size;
       size = sizes[fieldIndex++];
-      final expires =
-          size != 0 ? utf8.decode(data.skip(i).take(size).toList()) : null;
+      final expires = size != 0
+          ? utf8.decode(data.skip(i).take(size).toList())
+          : null;
 
       i += size;
       size = sizes[fieldIndex++];
@@ -251,14 +251,16 @@ class FileCacheStore extends CacheStore {
 
       i += size;
       size = sizes[fieldIndex++];
-      final rawRequestDate =
-          size != 0 ? utf8.decode(data.skip(i).take(size).toList()) : null;
+      final rawRequestDate = size != 0
+          ? utf8.decode(data.skip(i).take(size).toList())
+          : null;
       final requestDate = DateTime.parse(rawRequestDate!);
 
       i += size;
       size = sizes[fieldIndex++];
-      final statusCode =
-          size != 0 ? utf8.decode(data.skip(i).take(size).toList()) : null;
+      final statusCode = size != 0
+          ? utf8.decode(data.skip(i).take(size).toList())
+          : null;
 
       return CacheResponse(
         cacheControl: CacheControl.fromString(cacheControl),
@@ -270,8 +272,10 @@ class FileCacheStore extends CacheStore {
         key: path.basename(file.path),
         lastModified: lastModified,
         maxStale: maxStale != null
-            ? DateTime.fromMillisecondsSinceEpoch(int.parse(maxStale),
-                isUtc: true)
+            ? DateTime.fromMillisecondsSinceEpoch(
+                int.parse(maxStale),
+                isUtc: true,
+              )
             : null,
         priority: _getPriority(file),
         requestDate: requestDate,
@@ -289,10 +293,7 @@ class FileCacheStore extends CacheStore {
     return Future.value();
   }
 
-  Future<void> _deleteFile(
-    File? file, {
-    bool staleOnly = false,
-  }) async {
+  Future<void> _deleteFile(File? file, {bool staleOnly = false}) async {
     if (staleOnly) {
       final resp = await _deserializeContent(file);
       if (resp == null || !resp.isStaled()) {
@@ -330,17 +331,12 @@ class FileCacheStore extends CacheStore {
 
   static Map<CachePriority, Directory> _genDirectories(String directory) {
     return Map.fromEntries(
-      Iterable.generate(
-        CachePriority.values.length,
-        (i) {
-          final priority = CachePriority.values[i];
-          final subDir = Directory(
-            path.join(directory, priority.name),
-          );
+      Iterable.generate(CachePriority.values.length, (i) {
+        final priority = CachePriority.values[i];
+        final subDir = Directory(path.join(directory, priority.name));
 
-          return MapEntry(priority, subDir);
-        },
-      ),
+        return MapEntry(priority, subDir);
+      }),
     );
   }
 }

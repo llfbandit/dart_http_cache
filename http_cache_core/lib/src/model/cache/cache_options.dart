@@ -6,11 +6,12 @@ import 'cache_policy.dart';
 import 'cache_priority.dart';
 
 /// Key builder to customize keys.
-typedef CacheKeyBuilder = String Function({
-  required Uri url,
-  Map<String, String>? headers,
-  Object? body,
-});
+typedef CacheKeyBuilder =
+    String Function({
+      required Uri url,
+      Map<String, String>? headers,
+      Object? body,
+    });
 
 /// Options to apply to handle request and cache behaviour.
 class CacheOptions {

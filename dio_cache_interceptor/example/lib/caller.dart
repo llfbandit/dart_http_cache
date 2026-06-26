@@ -54,10 +54,7 @@ class Caller {
     return 'Store cleared completely';
   }
 
-  Future<Response?> _call({
-    required String url,
-    CachePolicy? policy,
-  }) {
+  Future<Response?> _call({required String url, CachePolicy? policy}) {
     Options? options;
     options = cacheOptions.copyWith(policy: policy).toOptions();
 

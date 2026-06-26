@@ -16,7 +16,7 @@ class HttpDate {
       'Sep',
       'Oct',
       'Nov',
-      'Dec'
+      'Dec',
     ];
 
     final d = date.toUtc();
@@ -62,7 +62,7 @@ class HttpDate {
       'Thursday',
       'Friday',
       'Saturday',
-      'Sunday'
+      'Sunday',
     ];
     const months = [
       'Jan',
@@ -76,7 +76,7 @@ class HttpDate {
       'Sep',
       'Oct',
       'Nov',
-      'Dec'
+      'Dec',
     ];
 
     final formatRfc1123 = 0;

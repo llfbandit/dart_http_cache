@@ -23,8 +23,8 @@ class IsolatedHiveCacheStore extends BaseHiveCacheStore {
     super.hiveBoxName,
     super.encryptionCipher,
     IsolatedHiveInterface? hiveInterface,
-  })  : hive = hiveInterface ?? IsolatedHive,
-        super(directory: directory);
+  }) : hive = hiveInterface ?? IsolatedHive,
+       super(directory: directory);
 
   @override
   void registerAdapters() {

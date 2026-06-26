@@ -33,25 +33,21 @@ void main() {
   test('deleteFromPath', () => deleteFromPath(store));
   test('getFromPath', () => getFromPath(store));
 
-  test(
-    'Corrupted file',
-    () async {
-      await addFooResponse(store, key: 'corrupt');
-      expect(await store.get('corrupt'), isNotNull);
+  test('Corrupted file', () async {
+    await addFooResponse(store, key: 'corrupt');
+    expect(await store.get('corrupt'), isNotNull);
 
-      // corrupt file
-      final file =
-          File(path.join(dirPath, CachePriority.normal.name, 'corrupt'));
-      if (!file.existsSync()) {
-        throw Exception('Unexpected missing file.');
-      }
+    // corrupt file
+    final file = File(path.join(dirPath, CachePriority.normal.name, 'corrupt'));
+    if (!file.existsSync()) {
+      throw Exception('Unexpected missing file.');
+    }
 
-      final bytes = file.readAsBytesSync();
-      await file.writeAsBytes(bytes.sublist(0, bytes.length ~/ 2));
+    final bytes = file.readAsBytesSync();
+    await file.writeAsBytes(bytes.sublist(0, bytes.length ~/ 2));
 
-      expect(await store.get('corrupt'), isNull);
-    },
-  );
+    expect(await store.get('corrupt'), isNull);
+  });
 
   test(
     'Concurrent access',

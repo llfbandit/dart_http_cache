@@ -23,8 +23,8 @@ class HiveCacheStore extends BaseHiveCacheStore {
     super.hiveBoxName,
     super.encryptionCipher,
     HiveInterface? hiveInterface,
-  })  : hive = hiveInterface ?? Hive,
-        super(directory: directory);
+  }) : hive = hiveInterface ?? Hive,
+       super(directory: directory);
 
   @override
   void registerAdapters() {

@@ -22,10 +22,7 @@ void main() {
     dio = Dio()..httpClientAdapter = MockHttpClientAdapter();
 
     store = MemCacheStore();
-    options = CacheOptions(
-      store: store,
-      maxStale: const Duration(seconds: 1),
-    );
+    options = CacheOptions(store: store, maxStale: const Duration(seconds: 1));
 
     dio.interceptors.add(DioCacheInterceptor(options: options));
   }
@@ -67,9 +64,9 @@ void main() {
     setUpDefault();
 
     // 1st time - request is stored in cache
-    var resp = await request(options.copyWith(
-      maxStale: const Duration(seconds: 1),
-    ));
+    var resp = await request(
+      options.copyWith(maxStale: const Duration(seconds: 1)),
+    );
     final key = resp.extra[extraCacheKey];
     expect(await store.exists(key), isTrue);
 
@@ -81,10 +78,12 @@ void main() {
     await Future.delayed(const Duration(seconds: 1));
 
     // 3rd time - the response is staled, remote call
-    resp = await request(options.copyWith(
-      policy: CachePolicy.forceCache,
-      maxStale: const Duration(seconds: 1),
-    ));
+    resp = await request(
+      options.copyWith(
+        policy: CachePolicy.forceCache,
+        maxStale: const Duration(seconds: 1),
+      ),
+    );
     fromNetwork = resp.extra[extraFromNetworkKey];
     expect(fromNetwork, isTrue);
   });

@@ -39,13 +39,15 @@ class DriftCacheStore extends CacheStore {
     this.logStatements = false,
     this.webSqlite3WasmPath = 'sqlite3.wasm',
     this.webDriftWorkerPath = 'drift_worker.js',
-  }) : _db = DioCacheDatabase(openDb(
-          databasePath: databasePath,
-          databaseName: databaseName,
-          webSqlite3WasmPath: webSqlite3WasmPath,
-          webDriftWorkerPath: webDriftWorkerPath,
-          logStatements: logStatements,
-        )) {
+  }) : _db = DioCacheDatabase(
+         openDb(
+           databasePath: databasePath,
+           databaseName: databaseName,
+           webSqlite3WasmPath: webSqlite3WasmPath,
+           webDriftWorkerPath: webDriftWorkerPath,
+           logStatements: logStatements,
+         ),
+       ) {
     clean(staleOnly: true);
   }
 
@@ -97,9 +99,8 @@ class DriftCacheStore extends CacheStore {
     await _getFromPath(
       pathPattern,
       queryParams: queryParams,
-      onResult: (keys) async => responses.addAll(
-        await _db.dioCacheDao.getMany(keys),
-      ),
+      onResult: (keys) async =>
+          responses.addAll(await _db.dioCacheDao.getMany(keys)),
     );
 
     return responses;
@@ -130,14 +131,17 @@ class DriftCacheStore extends CacheStore {
       dotAll: pathPattern.isDotAll,
     );
 
-    final results = await (_db.dioCacheDao.selectOnly(cache)
-          ..where(matchesPath)
-          ..addColumns([cache.cacheKey, cache.url]))
-        .map((result) => MapEntry(
-              result.read(cache.cacheKey)!,
-              result.read(cache.url)!,
-            ))
-        .get();
+    final results =
+        await (_db.dioCacheDao.selectOnly(cache)
+              ..where(matchesPath)
+              ..addColumns([cache.cacheKey, cache.url]))
+            .map(
+              (result) => MapEntry(
+                result.read(cache.cacheKey)!,
+                result.read(cache.url)!,
+              ),
+            )
+            .get();
 
     results.removeWhere(
       (e) => !pathExists(e.value, pathPattern, queryParams: queryParams),

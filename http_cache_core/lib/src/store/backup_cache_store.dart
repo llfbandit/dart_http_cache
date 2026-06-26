@@ -25,10 +25,7 @@ class BackupCacheStore extends CacheStore {
     CachePriority priorityOrBelow = CachePriority.high,
     bool staleOnly = false,
   }) async {
-    await primary.clean(
-      priorityOrBelow: priorityOrBelow,
-      staleOnly: staleOnly,
-    );
+    await primary.clean(priorityOrBelow: priorityOrBelow, staleOnly: staleOnly);
     return secondary.clean(
       priorityOrBelow: priorityOrBelow,
       staleOnly: staleOnly,
@@ -71,9 +68,11 @@ class BackupCacheStore extends CacheStore {
     final responses = <CacheResponse>[];
 
     responses.addAll(
-        await primary.getFromPath(pathPattern, queryParams: queryParams));
+      await primary.getFromPath(pathPattern, queryParams: queryParams),
+    );
     responses.addAll(
-        await secondary.getFromPath(pathPattern, queryParams: queryParams));
+      await secondary.getFromPath(pathPattern, queryParams: queryParams),
+    );
 
     // Deduplicate by key; primary's entry wins (added first).
     final seen = <String>{};

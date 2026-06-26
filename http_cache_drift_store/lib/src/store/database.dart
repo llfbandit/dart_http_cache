@@ -21,16 +21,14 @@ class DioCacheDatabase extends _$DioCacheDatabase {
           throw Exception("Can't downgrade database");
         }
 
-        await transaction(
-          () async {
-            if (from < 2) {
-              await m.addColumn(dioCache, dioCache.requestDate);
-            }
-            if (from < 3) {
-              await m.addColumn(dioCache, dioCache.statusCode);
-            }
-          },
-        );
+        await transaction(() async {
+          if (from < 2) {
+            await m.addColumn(dioCache, dioCache.requestDate);
+          }
+          if (from < 3) {
+            await m.addColumn(dioCache, dioCache.statusCode);
+          }
+        });
       },
     );
   }
@@ -46,16 +44,14 @@ class DioCacheDao extends DatabaseAccessor<DioCacheDatabase>
     bool staleOnly = false,
   }) async {
     final query = delete(dioCache)
-      ..where(
-        (t) {
-          var expr = t.priority.isSmallerOrEqualValue(priorityOrBelow.index);
-          if (staleOnly) {
-            expr =
-                expr & t.maxStale.isSmallerOrEqualValue(DateTime.now().toUtc());
-          }
-          return expr;
-        },
-      );
+      ..where((t) {
+        var expr = t.priority.isSmallerOrEqualValue(priorityOrBelow.index);
+        if (staleOnly) {
+          expr =
+              expr & t.maxStale.isSmallerOrEqualValue(DateTime.now().toUtc());
+        }
+        return expr;
+      });
 
     await query.go();
   }
@@ -132,7 +128,8 @@ class DioCacheDao extends DatabaseAccessor<DioCacheDatabase>
       lastModified: data.lastModified,
       maxStale: data.maxStale,
       priority: CachePriority.values[data.priority],
-      requestDate: data.requestDate ??
+      requestDate:
+          data.requestDate ??
           data.responseDate.subtract(const Duration(milliseconds: 150)),
       responseDate: data.responseDate,
       url: data.url,

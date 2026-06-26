@@ -19,8 +19,9 @@ void main() {
     // We can't remove the lib while it's being loaded by the VM.
     useLocalSqlite();
 
-    store =
-        DriftCacheStore(databasePath: '${Directory.current.path}/test/data');
+    store = DriftCacheStore(
+      databasePath: '${Directory.current.path}/test/data',
+    );
   });
 
   setUp(() async {
