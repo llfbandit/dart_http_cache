@@ -55,11 +55,7 @@ class CacheClient extends http.BaseClient {
     Map<String, String>? headers,
     CacheOptions? options,
   }) async {
-    final response = await get(
-      url,
-      headers: headers,
-      options: _getCacheOptions(options),
-    );
+    final response = await get(url, headers: headers, options: options);
     _checkResponseSuccess(url, response);
     return response.body;
   }
@@ -70,11 +66,7 @@ class CacheClient extends http.BaseClient {
     Map<String, String>? headers,
     CacheOptions? options,
   }) async {
-    final response = await get(
-      url,
-      headers: headers,
-      options: _getCacheOptions(options),
-    );
+    final response = await get(url, headers: headers, options: options);
     _checkResponseSuccess(url, response);
     return response.bodyBytes;
   }
