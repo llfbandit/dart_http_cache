@@ -28,9 +28,7 @@ class DioCacheDatabase extends _$DioCacheDatabase {
           if (from < 3) {
             await m.addColumn(dioCache, dioCache.statusCode);
             // Backfill pre-v3 rows so they don't misreport as 304.
-            await (update(
-              dioCache,
-            )..where((t) => t.statusCode.isNull())).write(
+            await (update(dioCache)..where((t) => t.statusCode.isNull())).write(
               const DioCacheCompanion(statusCode: Value(200)),
             );
           }

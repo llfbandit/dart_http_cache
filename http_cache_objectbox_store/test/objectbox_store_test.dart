@@ -29,4 +29,9 @@ void main() {
   test('pathExists', () => pathExists(store));
   test('deleteFromPath', () => deleteFromPath(store));
   test('getFromPath', () => getFromPath(store));
+  test(
+    'Concurrent access',
+    () async => await concurrentAccess(store),
+    timeout: Timeout(Duration(minutes: 2)),
+  );
 }

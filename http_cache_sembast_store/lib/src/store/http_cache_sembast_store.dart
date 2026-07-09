@@ -15,6 +15,7 @@ class SembastCacheStore extends CacheStore {
 
   /// Sembast database
   Database? _database;
+  Future<Database>? _opening;
 
   /// Sembast ref instance for [CacheResponseBox]
   final StoreRef<String, Map<String, dynamic>> _store;
@@ -30,22 +31,27 @@ class SembastCacheStore extends CacheStore {
     bool staleOnly = false,
   }) async {
     final database = await _openDatabase();
-    final query = Finder(
-      filter: Filter.custom((snapshot) {
-        var value = snapshot['priority'] as String;
-        return CachePriority.values.byName(value).index <=
-            priorityOrBelow.index;
-      }),
-    );
 
-    final results = await _store.find(database, finder: query);
+    // Transaction: sembast serializes it against every other op, so a
+    // concurrent set() can't land between the staleness check and delete.
+    await database.transaction((txn) async {
+      final query = Finder(
+        filter: Filter.custom((snapshot) {
+          var value = snapshot['priority'] as String;
+          return CachePriority.values.byName(value).index <=
+              priorityOrBelow.index;
+        }),
+      );
 
-    for (final result in results) {
-      final value = CacheResponseExt.fromJson(result.value);
-      if ((staleOnly && value.isStaled()) || !staleOnly) {
-        await _store.record(result.key).delete(database);
+      final results = await _store.find(txn, finder: query);
+
+      for (final result in results) {
+        final value = CacheResponseExt.fromJson(result.value);
+        if ((staleOnly && value.isStaled()) || !staleOnly) {
+          await _store.record(result.key).delete(txn);
+        }
       }
-    }
+    });
   }
 
   @override
@@ -55,15 +61,16 @@ class SembastCacheStore extends CacheStore {
 
   @override
   Future<void> delete(String key, {bool staleOnly = false}) async {
-    final resp = await get(key);
-    if (resp == null) return;
-
-    if (staleOnly && !resp.isStaled()) {
-      return;
-    }
-
     final database = await _openDatabase();
-    await _store.record(key).delete(database);
+
+    await database.transaction((txn) async {
+      if (staleOnly) {
+        final resp = await _get(txn, key);
+        if (resp == null || !resp.isStaled()) return;
+      }
+
+      await _store.record(key).delete(txn);
+    });
   }
 
   @override
@@ -73,11 +80,14 @@ class SembastCacheStore extends CacheStore {
   }) async {
     final database = await _openDatabase();
 
-    await _getFromPath(
-      pathPattern,
-      queryParams: queryParams,
-      onResponseMatch: (r) => _store.record(r.key).delete(database),
-    );
+    await database.transaction((txn) async {
+      await _getFromPath(
+        txn,
+        pathPattern,
+        queryParams: queryParams,
+        onResponseMatch: (r) => _store.record(r.key).delete(txn),
+      );
+    });
   }
 
   @override
@@ -94,8 +104,7 @@ class SembastCacheStore extends CacheStore {
   @override
   Future<CacheResponse?> get(String key) async {
     final database = await _openDatabase();
-    final resp = await _store.record(key).getSnapshot(database);
-    return resp?.value != null ? CacheResponseExt.fromJson(resp!.value) : null;
+    return _get(database, key);
   }
 
   @override
@@ -104,8 +113,10 @@ class SembastCacheStore extends CacheStore {
     Map<String, String?>? queryParams,
   }) async {
     final responses = <CacheResponse>[];
+    final database = await _openDatabase();
 
     await _getFromPath(
+      database,
       pathPattern,
       queryParams: queryParams,
       onResponseMatch: (r) => responses.add(r),
@@ -121,19 +132,24 @@ class SembastCacheStore extends CacheStore {
     await _store.record(response.key).put(database, response.toJson());
   }
 
+  Future<CacheResponse?> _get(DatabaseClient client, String key) async {
+    final resp = await _store.record(key).getSnapshot(client);
+    return resp?.value != null ? CacheResponseExt.fromJson(resp!.value) : null;
+  }
+
   Future<void> _getFromPath(
+    DatabaseClient client,
     RegExp pathPattern, {
     Map<String, String?>? queryParams,
     required void Function(CacheResponse) onResponseMatch,
   }) async {
-    final database = await _openDatabase();
     var results = <RecordSnapshot<String, Map<String, dynamic>>>[];
     const limit = 10;
     int offset = 0;
 
     do {
       results = await _store.find(
-        database,
+        client,
         finder: Finder(limit: limit, offset: offset),
       );
 
@@ -149,9 +165,18 @@ class SembastCacheStore extends CacheStore {
     } while (results.isNotEmpty);
   }
 
+  /// Memoized so concurrent callers share one [DatabaseFactory.openDatabase] call.
   Future<Database> _openDatabase() async {
-    _database ??= await dbFactory.openDatabase('$storePath/$cacheStore');
-    return Future.value(_database);
+    final database = _database;
+    if (database != null) return database;
+
+    return _opening ??= dbFactory.openDatabase('$storePath/$cacheStore').then((
+      db,
+    ) {
+      _database = db;
+      _opening = null;
+      return db;
+    });
   }
 }
 
