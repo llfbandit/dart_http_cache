@@ -1,5 +1,5 @@
 import 'package:http_cache_mmkv_store/http_cache_mmkv_store.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:http_cache_store_tester/common_store_testing.dart';
 
 import 'fake/mmkv_fake.dart';
@@ -29,4 +29,9 @@ void main() async {
   test('pathExists', () => pathExists(store));
   test('deleteFromPath', () => deleteFromPath(store));
   test('getFromPath', () => getFromPath(store));
+  test(
+    'Concurrent access',
+    () async => await concurrentAccess(store),
+    timeout: Timeout(Duration(minutes: 2)),
+  );
 }
