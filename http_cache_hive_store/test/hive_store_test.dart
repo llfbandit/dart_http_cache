@@ -33,10 +33,12 @@ void main() {
   });
 
   group('Isolated hive', () {
-    late HiveCacheStore store;
+    late IsolatedHiveCacheStore store;
 
     setUpAll(() {
-      store = HiveCacheStore('${Directory.current.path}/test/data/file_store');
+      store = IsolatedHiveCacheStore(
+        '${Directory.current.path}/test/data/file_store',
+      );
     });
 
     setUp(() async {
