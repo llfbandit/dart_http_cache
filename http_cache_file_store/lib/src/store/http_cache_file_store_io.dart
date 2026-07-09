@@ -186,9 +186,9 @@ class FileCacheStore extends CacheStore {
   Future<CacheResponse?> _deserializeContent(File? file) async {
     if (file == null) return null;
 
-    final data = await file.readAsBytes();
-
     try {
+      final data = await file.readAsBytes();
+
       // Get field sizes
       // 11 fields. int is encoded with 32 bits from Int8List
       var i = 12 * 4;
