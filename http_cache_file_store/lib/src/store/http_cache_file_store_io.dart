@@ -155,7 +155,7 @@ class FileCacheStore extends CacheStore {
 
     return [
       ...Int32List.fromList([
-        response.content?.length ?? 0,
+        response.content?.length ?? -1,
         etag.length,
         response.headers?.length ?? 0,
         lastModified.length,
@@ -199,9 +199,9 @@ class FileCacheStore extends CacheStore {
       var fieldIndex = 0;
 
       var size = sizes[fieldIndex++];
-      final content = size != 0 ? data.skip(i).take(size).toList() : null;
+      final content = size >= 0 ? data.skip(i).take(size).toList() : null;
 
-      i += size;
+      i += size < 0 ? 0 : size;
       size = sizes[fieldIndex++];
       final etag = size != 0
           ? utf8.decode(data.skip(i).take(size).toList())
