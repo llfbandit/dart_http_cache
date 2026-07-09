@@ -41,19 +41,22 @@ class HiveCacheStore extends BaseHiveCacheStore {
 
   @override
   Future<void> close() async {
-    if (_box case final box? when box.isOpen) {
-      _box = null;
+    final box = _box;
+    _box = null;
+    if (box != null && box.isOpen) {
       return box.close();
     }
   }
 
   @override
   Future<HttpCacheHiveBox<CacheResponse>> openBox() async {
-    _box ??= await hive.openLazyBox<CacheResponse>(
-      hiveBoxName,
-      encryptionCipher: encryptionCipher,
-      path: directory,
-    );
+    if (_box == null || !_box!.isOpen) {
+      _box = await hive.openLazyBox<CacheResponse>(
+        hiveBoxName,
+        encryptionCipher: encryptionCipher,
+        path: directory,
+      );
+    }
 
     return LazyBoxAdapter(_box!);
   }

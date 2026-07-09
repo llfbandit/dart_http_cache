@@ -48,8 +48,9 @@ class IsolatedHiveCacheStore extends BaseHiveCacheStore {
 
   @override
   Future<void> close() async {
-    if (_box case final box? when box.isOpen) {
-      _box = null;
+    final box = _box;
+    _box = null;
+    if (box != null && box.isOpen) {
       return box.close();
     }
   }
@@ -60,11 +61,13 @@ class IsolatedHiveCacheStore extends BaseHiveCacheStore {
       await (_initFuture ??= hive.init(directory));
     }
 
-    _box ??= await hive.openLazyBox<CacheResponse>(
-      hiveBoxName,
-      encryptionCipher: encryptionCipher,
-      path: directory,
-    );
+    if (_box == null || !_box!.isOpen) {
+      _box = await hive.openLazyBox<CacheResponse>(
+        hiveBoxName,
+        encryptionCipher: encryptionCipher,
+        path: directory,
+      );
+    }
 
     return IsolatedLazyBoxAdapter(_box!);
   }
