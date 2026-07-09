@@ -281,7 +281,7 @@ class FileCacheStore extends CacheStore {
         requestDate: requestDate,
         responseDate: DateTime.parse(responseDate),
         url: url,
-        statusCode: statusCode != null ? int.tryParse(statusCode) ?? 304 : 304,
+        statusCode: statusCode != null ? int.tryParse(statusCode) ?? 200 : 200,
       );
     } catch (e) {
       // File is corrupted. Throw it away, we can't recover it.

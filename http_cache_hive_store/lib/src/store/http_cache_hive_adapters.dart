@@ -133,7 +133,7 @@ class CacheResponseAdapter extends TypeAdapter<CacheResponse> {
       responseDate: fields[10] as DateTime,
       url: fields[11] as String,
       requestDate: fields[12] as DateTime,
-      statusCode: fields[13] as int? ?? 304,
+      statusCode: fields[13] as int? ?? 200,
     );
   }
 

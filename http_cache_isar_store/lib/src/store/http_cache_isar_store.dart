@@ -190,7 +190,7 @@ class IsarCacheStore extends CacheStore {
           data.responseDate.subtract(const Duration(milliseconds: 150)),
       responseDate: data.responseDate,
       url: data.url,
-      statusCode: data.statusCode ?? 304,
+      statusCode: data.statusCode ?? 200,
     );
   }
 }

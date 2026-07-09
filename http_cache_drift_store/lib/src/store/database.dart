@@ -27,6 +27,12 @@ class DioCacheDatabase extends _$DioCacheDatabase {
           }
           if (from < 3) {
             await m.addColumn(dioCache, dioCache.statusCode);
+            // Backfill pre-v3 rows so they don't misreport as 304.
+            await (update(
+              dioCache,
+            )..where((t) => t.statusCode.isNull())).write(
+              const DioCacheCompanion(statusCode: Value(200)),
+            );
           }
         });
       },
@@ -133,7 +139,7 @@ class DioCacheDao extends DatabaseAccessor<DioCacheDatabase>
           data.responseDate.subtract(const Duration(milliseconds: 150)),
       responseDate: data.responseDate,
       url: data.url,
-      statusCode: data.statusCode ?? 304,
+      statusCode: data.statusCode ?? 200,
     );
   }
 

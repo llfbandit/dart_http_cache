@@ -198,7 +198,7 @@ extension CacheResponseExt on CacheResponse {
       requestDate: DateTime.parse(instance['requestDate']),
       priority: CachePriority.values.byName(instance['priority']),
       cacheControl: CacheControlExt.fromJson(instance['cacheControl']),
-      statusCode: instance['statusCode'] ?? 304,
+      statusCode: instance['statusCode'] ?? 200,
     );
   }
 }

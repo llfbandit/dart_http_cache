@@ -241,7 +241,7 @@ class CacheResponseBox {
       responseDate: responseDate,
       url: url,
       requestDate: requestDate,
-      statusCode: statusCode ?? 304,
+      statusCode: statusCode ?? 200,
     );
   }
 
