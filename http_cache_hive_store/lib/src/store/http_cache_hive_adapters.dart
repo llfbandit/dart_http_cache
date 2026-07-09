@@ -1,6 +1,22 @@
 import 'package:hive_ce/hive.dart';
 import 'package:http_cache_core/http_cache_core.dart';
 
+/// Registers the adapters required to (de)serialize cache entries.
+///
+/// Shared by [HiveCacheStore] and [IsolatedHiveCacheStore], whose [HiveInterface]
+/// and [IsolatedHiveInterface] both implement [TypeRegistry].
+void registerHiveCacheAdapters(TypeRegistry registry) {
+  if (!registry.isAdapterRegistered(CacheResponseAdapter.id)) {
+    registry.registerAdapter(CacheResponseAdapter());
+  }
+  if (!registry.isAdapterRegistered(CacheControlAdapter.id)) {
+    registry.registerAdapter(CacheControlAdapter());
+  }
+  if (!registry.isAdapterRegistered(CachePriorityAdapter.id)) {
+    registry.registerAdapter(CachePriorityAdapter());
+  }
+}
+
 /// Interface abstracting Hive box operations for both regular and isolated Hive.
 ///
 /// This interface unifies the API between [LazyBox] and [IsolatedLazyBox]

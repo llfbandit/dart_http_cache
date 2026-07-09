@@ -31,26 +31,30 @@ abstract class BaseHiveCacheStore extends CacheStore {
     clean(staleOnly: true);
   }
 
+  /// Yields every non-null entry currently stored in [box].
+  Stream<CacheResponse> _entries(HttpCacheHiveBox<CacheResponse> box) async* {
+    final boxKeys = await box.keys;
+
+    for (var i = 0; i < boxKeys.length; i++) {
+      final resp = await box.getAt(i);
+      if (resp != null) yield resp;
+    }
+  }
+
   @override
   Future<void> clean({
     CachePriority priorityOrBelow = CachePriority.high,
     bool staleOnly = false,
   }) async {
     final box = await openBox();
-    final boxKeys = await box.keys;
-
     final keys = <String>[];
 
-    for (var i = 0; i < boxKeys.length; i++) {
-      final resp = await box.getAt(i);
+    await for (final resp in _entries(box)) {
+      var shouldRemove = resp.priority.index <= priorityOrBelow.index;
+      shouldRemove &= (staleOnly && resp.isStaled()) || !staleOnly;
 
-      if (resp != null) {
-        var shouldRemove = resp.priority.index <= priorityOrBelow.index;
-        shouldRemove &= (staleOnly && resp.isStaled()) || !staleOnly;
-
-        if (shouldRemove) {
-          keys.add(resp.key);
-        }
+      if (shouldRemove) {
+        keys.add(resp.key);
       }
     }
 
@@ -99,17 +103,11 @@ abstract class BaseHiveCacheStore extends CacheStore {
     Map<String, String?>? queryParams,
   }) async {
     final responses = <CacheResponse>[];
-
     final box = await openBox();
-    final boxKeys = await box.keys;
 
-    for (var i = 0; i < boxKeys.length; i++) {
-      final resp = await box.getAt(i);
-
-      if (resp != null) {
-        if (pathExists(resp.url, pathPattern, queryParams: queryParams)) {
-          responses.add(resp);
-        }
+    await for (final resp in _entries(box)) {
+      if (pathExists(resp.url, pathPattern, queryParams: queryParams)) {
+        responses.add(resp);
       }
     }
 

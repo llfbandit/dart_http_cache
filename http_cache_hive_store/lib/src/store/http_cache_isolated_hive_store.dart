@@ -34,17 +34,7 @@ class IsolatedHiveCacheStore extends BaseHiveCacheStore {
        super(directory: directory);
 
   @override
-  void registerAdapters() {
-    if (!hive.isAdapterRegistered(CacheResponseAdapter.id)) {
-      hive.registerAdapter(CacheResponseAdapter());
-    }
-    if (!hive.isAdapterRegistered(CacheControlAdapter.id)) {
-      hive.registerAdapter(CacheControlAdapter());
-    }
-    if (!hive.isAdapterRegistered(CachePriorityAdapter.id)) {
-      hive.registerAdapter(CachePriorityAdapter());
-    }
-  }
+  void registerAdapters() => registerHiveCacheAdapters(hive);
 
   @override
   Future<void> close() async {
