@@ -136,6 +136,12 @@ class FileCacheStore extends CacheStore {
 
     final result = await lock.synchronized(() => computation());
 
+    // No pending/running call chained on this lock: safe to drop it so
+    // `_locks` doesn't grow forever with one entry per key ever accessed.
+    if (!lock.locked) {
+      _locks.remove(key);
+    }
+
     return result;
   }
 
