@@ -60,11 +60,10 @@ abstract class BaseHiveCacheStore extends CacheStore {
   @override
   Future<void> delete(String key, {bool staleOnly = false}) async {
     final box = await openBox();
-    final resp = await box.get(key);
-    if (resp == null) return Future.value();
 
-    if (staleOnly && !resp.isStaled()) {
-      return Future.value();
+    if (staleOnly) {
+      final resp = await box.get(key);
+      if (resp == null || !resp.isStaled()) return;
     }
 
     await box.delete(key);
@@ -79,9 +78,7 @@ abstract class BaseHiveCacheStore extends CacheStore {
 
     final box = await openBox();
 
-    for (final response in responses) {
-      await box.delete(response.key);
-    }
+    await box.deleteAll(responses.map((response) => response.key).toList());
   }
 
   @override
