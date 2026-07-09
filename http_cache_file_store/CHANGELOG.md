@@ -1,5 +1,10 @@
-## next
-- chore: Min SDK is now 3.6.0.
+## 2.0.2
+- perf: use Uint8List.sublist when decoding fields.
+- fix: don't misreport older store unknown status code entry as 304.
+- fix: prune idle locks to prevent unbounded growth.
+- fix: preserve empty-body vs no-body distinction in serialized content.
+- fix: catch I/O errors when reading cache files.
+- chore: Min SDK is now 3.8.0.
 
 ## 2.0.1
 - chore: Update `http_cache_core` to 1.1.0.

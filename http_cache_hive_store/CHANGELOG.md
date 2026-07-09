@@ -1,3 +1,12 @@
+## 5.1.1
+- perf: avoid redundant reads and batch deleteFromPath
+- fix: Store race condition when cleaning at start and guard RW concurrent calls.
+- fix: code duplication.
+- fix: make CacheControlAdapter.other field null-safe
+- fix: recover from a box closed by another store instance
+- fix: initialize IsolatedHive before opening boxes.
+- chore: Min SDK is now 3.8.0.
+
 ## 5.1.0
 - feat: Add Isolated Hive cache store.
 

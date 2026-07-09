@@ -1,5 +1,8 @@
-## next
-- chore: Min SDK is now 3.6.0.
+## 7.0.1
+- fix: Avoid premature eviction from maxStale second-precision truncation.
+- fix: Rework platform export.
+- fix: don't misreport older store unknown status code entry as 304.
+- chore: Min SDK is now 3.8.0.
 
 ## 7.0.0
 - feat: Saves response status code.
