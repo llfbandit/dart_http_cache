@@ -47,7 +47,11 @@ melos:
         # Runs "flutter clean" in all Flutter packages (`--flutter`) with concurrency
         post: melos exec --flutter -c 1 -- "flutter clean"
     
-    scripts:
+  scripts:
     format:
       description: Format Dart code.
-      run: dart format .
+      run: melos exec -- dart format lib/
+    
+    cov:test:
+      run: full_cover -j 4 -p 4
+      description: Run all tests and generate coverage data per package.

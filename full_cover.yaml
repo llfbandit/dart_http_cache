@@ -1,0 +1,35 @@
+# Global file/folder exclusions applied to every package.
+# Entries can be plain glob strings or a pattern+except block.
+global_excludes:
+  - "**/*.g.dart"
+  - pattern: "**/ui/**"
+    except:
+      - "**_bloc.dart"
+
+# Per-package exclusions (glob pattern on the package path).
+# Omitting or leaving excludes empty skips the entire package (**).
+package_excludes:
+  - package: "http_cache_store_tester"
+  - package: "dio_cache_interceptor/example"
+  - package: "http_cache_isar_store"
+  - package: "http_cache_objectbox_store"
+
+output:
+  global: true                    # write merged lcov.info at output.directory/lcov.info
+  directory: coverage             # base folder for coverage outputs
+
+  html:
+    global: true                  # generate a merged HTML report at output.directory/html.directory
+    package: false                # also generate an HTML report inside each package's coverage/html
+    directory: html               # HTML subfolder relative to output.directory
+
+limits:
+  line:
+    minimum: 60                   # below this => red
+    average: 80                   # below this => yellow, above => green
+  branch:
+    minimum: 60
+    average: 80
+  function:
+    minimum: 60
+    average: 80
