@@ -53,8 +53,7 @@ class DioCacheDao extends DatabaseAccessor<DioCacheDatabase>
       ..where((t) {
         var expr = t.priority.isSmallerOrEqualValue(priorityOrBelow.index);
         if (staleOnly) {
-          expr =
-              expr & t.maxStale.isSmallerOrEqualValue(DateTime.now().toUtc());
+          expr = expr & t.maxStale.isSmallerThanValue(DateTime.now().toUtc());
         }
         return expr;
       });
@@ -68,7 +67,7 @@ class DioCacheDao extends DatabaseAccessor<DioCacheDatabase>
         final expr = t.cacheKey.equals(key);
 
         return staleOnly
-            ? expr & t.maxStale.isSmallerOrEqualValue(DateTime.now().toUtc())
+            ? expr & t.maxStale.isSmallerThanValue(DateTime.now().toUtc())
             : expr;
       });
 
