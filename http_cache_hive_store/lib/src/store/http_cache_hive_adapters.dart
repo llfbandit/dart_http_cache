@@ -190,7 +190,7 @@ class CacheControlAdapter extends TypeAdapter<CacheControl> {
       privacy: fields[1] as String?,
       noCache: fields[2] as bool? ?? false,
       noStore: fields[3] as bool? ?? false,
-      other: (fields[4] as List).cast<String>(),
+      other: (fields[4] as List?)?.cast<String>() ?? const [],
       maxStale: fields[5] as int? ?? -1,
       minFresh: fields[6] as int? ?? -1,
       mustRevalidate: fields[7] as bool? ?? false,
