@@ -11,7 +11,6 @@ package_excludes:
   - package: "http_cache_store_tester"
   - package: "dio_cache_interceptor/example"
   - package: "http_cache_isar_store"
-  - package: "http_cache_objectbox_store"
 
 output:
   global: true                    # write merged lcov.info at output.directory/lcov.info

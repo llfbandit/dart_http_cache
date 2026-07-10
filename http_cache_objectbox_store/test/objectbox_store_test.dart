@@ -8,7 +8,7 @@ void main() {
   late ObjectBoxCacheStore store;
 
   setUpAll(() {
-    store = ObjectBoxCacheStore(storePath: Directory.current.path);
+    store = ObjectBoxCacheStore(storePath: '${Directory.current.path}/test');
   });
 
   setUp(() async {
