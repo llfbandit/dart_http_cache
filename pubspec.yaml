@@ -50,7 +50,11 @@ melos:
   scripts:
     format:
       description: Format Dart code.
-      run: melos exec -- dart format lib/
+      run: melos exec -- dart format lib/ --set-exit-if-changed
+    
+    analyze:
+      description: Analyze packages
+      run: melos exec -- dart analyze
     
     cov:test:
       run: full_cover -j 4 -p 4

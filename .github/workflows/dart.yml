@@ -14,7 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # Prepare
+      - uses: actions/checkout@v7
       
       - uses: subosito/flutter-action@v2
         with:
@@ -28,77 +29,29 @@ jobs:
       - name: Install dependencies
         run: melos bs
 
-      # verify the use of 'dart format' on each commit.
-      - name: Verify formatting - dio_cache_interceptor
-        working-directory: dio_cache_interceptor
-        run: dart format --output=none --set-exit-if-changed .
+      # Verify
+      - name: Verify formatting
+        run: melos format
 
-      # Consider passing '--fatal-infos' for slightly stricter analysis.
-      - name: Analyze project source - dio_cache_interceptor
-        working-directory: dio_cache_interceptor
-        run: dart analyze
+      - name: Analyze project source
+        run: melos analyze
 
-      - name: Run tests - dio_cache_interceptor
-        working-directory: dio_cache_interceptor
-        run: |
-          flutter test --coverage
-      
-      - name: Verify formatting - http_cache_client
-        working-directory: http_cache_client
-        run: dart format --output=none --set-exit-if-changed .
-
-      # Consider passing '--fatal-infos' for slightly stricter analysis.
-      - name: Analyze project source - http_cache_client
-        working-directory: http_cache_client
-        run: dart analyze
-      
-      - name: Run tests - http_cache_client
-        working-directory: http_cache_client
-        run: |
-          flutter test --coverage
-
-      - name: Run tests - http_cache_core
-        working-directory: http_cache_core
-        run: |
-          flutter test --coverage
-
-      # Run store tests.
-      - name: Run tests - Drift store
-        working-directory: http_cache_drift_store
-        run: |
-          flutter test --coverage
-      
-      - name: Run tests - File store
-        working-directory: http_cache_file_store
-        run: |
-          flutter test --coverage
-
-      - name: Run tests - Hive store
-        working-directory: http_cache_hive_store
-        run: |
-          flutter test --coverage
-
-      - name: Run tests - ObjectBox store
+      # Test
+      - name: Test ObjectBox
         working-directory: http_cache_objectbox_store
         run: |
           bash <(curl -s https://raw.githubusercontent.com/objectbox/objectbox-dart/main/install.sh)
-          flutter test --coverage
+          dart test
       
-      - name: Run tests - Sembast store
-        working-directory: http_cache_sembast_store
+      - name: Run all tests
         run: |
-          flutter test --coverage
+          dart pub global activate full_cover
+          full_cover
       
-      - name: Activate combine_coverage
-        run: |
-          dart pub global activate combine_coverage
-
-      - name: Merge test coverage
-        run: |
-          combine_coverage --repo-path=.
-      
+      # Coverage
       - name: Upload global coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v7
         with:
           token: ${{secrets.CODECOV_TOKEN}}
+          disable_search: true
           files: coverage/lcov.info
