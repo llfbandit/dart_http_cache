@@ -14,3 +14,11 @@ targets:
           override_hash_and_equals_in_result_sets: false
           generate_values_in_copy_with: false
           generate_manager: false
+
+          # The directory where the schema files are stored:
+          schema_dir: db_schemas/
+          test_dir: test/
+
+          databases:
+            # Required: A name for the database and its path
+            database: lib/src/store/database.dart

@@ -1,10 +1,9 @@
 # Global file/folder exclusions applied to every package.
 # Entries can be plain glob strings or a pattern+except block.
 global_excludes:
-  - "**/*.g.dart"
-  - pattern: "**/ui/**"
-    except:
-      - "**_bloc.dart"
+  - "**.g.dart"
+  - "**_web.dart"
+  - "**.steps.dart"
 
 # Per-package exclusions (glob pattern on the package path).
 # Omitting or leaving excludes empty skips the entire package (**).

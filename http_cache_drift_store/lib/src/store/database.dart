@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:http_cache_core/http_cache_core.dart';
+import 'package:http_cache_drift_store/src/store/database.steps.dart';
 
 export 'db_platform/db_platform.dart';
 
@@ -16,24 +17,18 @@ class DioCacheDatabase extends _$DioCacheDatabase {
   MigrationStrategy get migration {
     return MigrationStrategy(
       onCreate: (Migrator m) => m.createAll(),
-      onUpgrade: (Migrator m, int from, int to) async {
-        if (to < from) {
-          throw Exception("Can't downgrade database");
-        }
-
-        await transaction(() async {
-          if (from < 2) {
-            await m.addColumn(dioCache, dioCache.requestDate);
-          }
-          if (from < 3) {
-            await m.addColumn(dioCache, dioCache.statusCode);
-            // Backfill pre-v3 rows so they don't misreport as 304.
-            await (update(dioCache)..where((t) => t.statusCode.isNull())).write(
-              const DioCacheCompanion(statusCode: Value(200)),
-            );
-          }
-        });
-      },
+      onUpgrade: stepByStep(
+        from1To2: (m, schema) async {
+          await m.addColumn(dioCache, dioCache.requestDate);
+        },
+        from2To3: (Migrator m, Schema3 schema) async {
+          await m.addColumn(dioCache, dioCache.statusCode);
+          // Backfill pre-v3 rows so they don't misreport as 304.
+          await (update(dioCache)..where((t) => t.statusCode.isNull())).write(
+            const DioCacheCompanion(statusCode: Value(200)),
+          );
+        },
+      ),
     );
   }
 }
