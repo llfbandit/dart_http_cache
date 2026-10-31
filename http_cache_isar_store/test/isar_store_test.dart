@@ -9,8 +9,8 @@ void main() {
   late IsarCacheStore store;
 
   setUpAll(() async {
-    store = IsarCacheStore('${Directory.current.path}/test');
     await Isar.initializeIsarCore(download: true);
+    store = IsarCacheStore('${Directory.current.path}/test');
   });
 
   setUp(() async {

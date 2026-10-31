@@ -1,3 +1,6 @@
+## 3.2.0
+- feat: Update isar_community to 3.4.1.
+
 ## 3.1.0
 - feat: Update isar_community to 3.3.2.
 - fix: pin isar_community package versions to avoid errors with generated code.
